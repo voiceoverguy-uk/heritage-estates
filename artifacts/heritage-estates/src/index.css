@@ -1,0 +1,343 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --font-sans: var(--app-font-sans);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+}
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 213 60% 20%;
+  --border: 210 20% 88%;
+  --input: 210 20% 88%;
+  --ring: 210 100% 38%;
+  --card: 0 0% 100%;
+  --card-foreground: 213 60% 20%;
+  --primary: 210 100% 38%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 60% 96%;
+  --secondary-foreground: 210 100% 38%;
+  --muted: 210 20% 96%;
+  --muted-foreground: 210 20% 45%;
+  --accent: 210 80% 50%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --app-font-sans: 'Open Sans', Arial, sans-serif;
+  --radius: 0px;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Open Sans', Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: #006AC1;
+    font-family: 'Open Sans', Arial, sans-serif;
+  }
+  a {
+    color: #006AC1;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+    color: #0C71C3;
+  }
+}
+
+/* Heritage Estates custom utilities */
+.he-blue { color: #006AC1; }
+.he-bg-blue { background-color: #006AC1; }
+.he-bg-light-blue { background-color: #2EA3F2; }
+.he-border-blue { border-color: #006AC1; }
+
+.he-top-bar {
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+  font-size: 13px;
+  padding: 6px 0;
+}
+
+.he-nav-top {
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+}
+
+.he-nav-services {
+  background-color: #fff;
+  border-bottom: 2px solid #006AC1;
+}
+
+.he-nav-services a {
+  color: #006AC1;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 12px;
+  display: inline-block;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.he-nav-services a:hover {
+  background-color: #006AC1;
+  color: #fff;
+  text-decoration: none;
+}
+
+.he-nav-services a.active {
+  background-color: #006AC1;
+  color: #fff;
+}
+
+.he-btn {
+  background-color: #006AC1;
+  color: #fff;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  transition: background-color 0.2s;
+  text-decoration: none;
+}
+
+.he-btn:hover {
+  background-color: #005aaa;
+  color: #fff;
+  text-decoration: none;
+}
+
+.he-cta-box {
+  background-color: #2EA3F2;
+  color: #fff;
+  padding: 20px 24px;
+  margin: 8px;
+  flex: 1;
+}
+
+.he-cta-box h4 {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.he-cta-box a {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.he-service-card {
+  border: 1px solid #ddd;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.he-service-card:hover {
+  box-shadow: 0 4px 12px rgba(0,106,193,0.15);
+}
+
+.he-service-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.he-service-card h4 {
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #006AC1;
+  text-align: center;
+  background: #f0f6ff;
+  margin: 0;
+}
+
+.he-regulatory {
+  background: #fff8e1;
+  border-left: 4px solid #f59e0b;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.he-commitment-box {
+  border: 1px solid #dde8f5;
+  padding: 20px;
+  background: #f7faff;
+}
+
+.he-commitment-box h3 {
+  font-size: 16px;
+  color: #006AC1;
+  margin-bottom: 8px;
+}
+
+.accordion-item {
+  border-bottom: 1px solid #ddd;
+}
+
+.accordion-trigger {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 16px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #006AC1;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.accordion-trigger:hover {
+  color: #0C71C3;
+}
+
+.accordion-content {
+  padding-bottom: 16px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #444;
+}
+
+.he-form-field {
+  margin-bottom: 16px;
+}
+
+.he-form-field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.he-form-field input,
+.he-form-field textarea,
+.he-form-field select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  font-family: 'Open Sans', Arial, sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.he-form-field input:focus,
+.he-form-field textarea:focus,
+.he-form-field select:focus {
+  border-color: #006AC1;
+}
+
+.he-results-panel {
+  background: #f0f6ff;
+  border: 2px solid #006AC1;
+  padding: 24px;
+  margin-top: 24px;
+}
+
+.he-result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #dde8f5;
+  font-size: 15px;
+}
+
+.he-result-item:last-child {
+  border-bottom: none;
+}
+
+.he-result-label { color: #555; }
+.he-result-value { font-weight: 700; font-size: 18px; color: #006AC1; }
+.he-result-stressed { color: #dc2626; }
+
+.he-footer {
+  background-color: #1a3a5c;
+  color: #ccc;
+  padding: 30px 0;
+  font-size: 13px;
+  margin-top: 60px;
+}
+
+.he-footer a { color: #aac8e8; }
+.he-footer a:hover { color: #fff; }
+
+/* Gradient divider */
+.he-gradient-bar {
+  height: 6px;
+  background: linear-gradient(to right, #006AC1, #2EA3F2);
+}
+
+/* Hero overlay */
+.he-hero {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  overflow: hidden;
+}
+
+.he-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+
+/* Mobile nav */
+.mobile-menu {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .he-nav-services {
+    display: none;
+  }
+  .mobile-menu {
+    display: block;
+  }
+  .he-hero {
+    height: 220px;
+  }
+  .desktop-nav-top { display: none; }
+}
