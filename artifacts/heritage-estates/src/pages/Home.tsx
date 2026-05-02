@@ -9,7 +9,7 @@ const services = [
     img: "https://heritageestates.co.uk/wp-content/uploads/residential-mortgages-524x349.jpg",
   },
   {
-    label: "Mortgages For Directors",
+    label: "Mortgages For Company Directors",
     href: "/mortgages-for-company-directors/",
     img: "https://heritageestates.co.uk/wp-content/uploads/company-director-mortgages-524x349.jpg",
   },
