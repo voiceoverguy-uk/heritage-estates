@@ -3,13 +3,14 @@ import { Helmet } from "react-helmet-async";
 import PageWrapper from "@/components/PageWrapper";
 
 const services = [
-  "Residential Mortgage",
-  "Buy-To-Let Mortgage",
-  "First Time Buyer Mortgage",
+  "Residential",
+  "Commercial",
+  "Buy-To-Let",
+  "First Time Buyer",
   "Remortgage",
-  "Self Employed Mortgage",
-  "Company Director Mortgage",
-  "Insurance & Protection",
+  "Self Employed",
+  "Company Director",
+  "Insurance / Protection",
   "Other",
 ];
 

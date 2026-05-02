@@ -36,8 +36,8 @@ const newsGroups = [
   {
     title: "Property Review",
     items: [
-      { label: "September 2024", url: "https://heritageestates.co.uk/wp-content/uploads/Residential-Prop-Review-Sept-24.pdf" },
-      { label: "February 2025", url: "https://heritageestates.co.uk/wp-content/uploads/Quilter-Q1-2025-property-update.pdf" },
+      { label: "Sept 2024", url: "https://heritageestates.co.uk/wp-content/uploads/Residential-Prop-Review-Sept-24.pdf" },
+      { label: "Feb 2025", url: "https://heritageestates.co.uk/wp-content/uploads/Quilter-Q1-2025-property-update.pdf" },
       { label: "July 2025", url: "https://heritageestates.co.uk/wp-content/uploads/Property-Review-July-2025.pdf" },
     ],
   },
