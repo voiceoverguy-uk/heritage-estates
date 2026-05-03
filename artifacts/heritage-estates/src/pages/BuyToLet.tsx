@@ -1,3 +1,4 @@
+import { Link } from "wouter";
 import SeoHead from "@/components/SeoHead";
 import PageWrapper from "@/components/PageWrapper";
 import CtaBoxes from "@/components/CtaBoxes";
@@ -40,8 +41,11 @@ export default function BuyToLet() {
         </p>
 
         <h2 style={{ color: "#006AC1", fontSize: 20, marginBottom: 12 }}>Whole of Market Advisor</h2>
-        <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 32 }}>
+        <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 24 }}>
           Heritage Estates have access to the whole of market; this means we're not tied to a specific lender.
+        </p>
+        <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 32 }}>
+          Use our <Link href="/mortgage-calculator/">mortgage calculator</Link> to get an estimate of repayments on a buy-to-let property. We also advise on <Link href="/insurance-protection/">landlord and rental protection insurance</Link> to protect your income if your tenant is unable to pay.
         </p>
 
         <h3 style={{ color: "#006AC1", marginBottom: 12 }}>Why buy-to-let?</h3>

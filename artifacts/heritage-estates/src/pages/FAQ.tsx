@@ -15,7 +15,7 @@ const faqs = [
   },
   {
     q: "Can I get a mortgage if I'm self employed?",
-    a: "Yes! Please see Mortgages for Self Employed for further details.",
+    a: "Yes! Please see our Mortgages for Self Employed page for further details.",
   },
   {
     q: "Can I get a mortgage with less than 2 year's of accounts?",

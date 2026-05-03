@@ -60,6 +60,8 @@ export default function Home() {
         <img
           src="https://heritageestates.co.uk/wp-content/uploads/mortgages-in-leicester-hero-3.jpg"
           alt="Heritage Estates – Mortgage Broker in Leicester"
+          loading="eager"
+          fetchPriority="high"
         />
       </div>
 
@@ -98,6 +100,29 @@ export default function Home() {
             <li>We're available for you to contact should you have a question about your mortgage at a later date.</li>
           </ul>
         </div>
+      </div>
+
+      {/* Areas served — local SEO */}
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 16px 50px" }}>
+        <h2 style={{ color: "#006AC1", marginBottom: 16 }}>Serving Leicester and the Surrounding Area</h2>
+        <p style={{ fontSize: 15, color: "#555", lineHeight: 1.8, marginBottom: 12 }}>
+          Based in <strong>Oadby, Leicester</strong>, Heritage Estates provides independent mortgage and insurance advice to clients across Leicestershire and the East Midlands, including:
+        </p>
+        <ul style={{ fontSize: 15, color: "#555", lineHeight: 2.2, paddingLeft: 20, columns: 2, columnGap: 40, marginBottom: 16 }}>
+          <li>Leicester City</li>
+          <li>Oadby &amp; Wigston</li>
+          <li>Hinckley</li>
+          <li>Loughborough</li>
+          <li>Market Harborough</li>
+          <li>Melton Mowbray</li>
+          <li>Coalville</li>
+          <li>Lutterworth</li>
+          <li>Blaby</li>
+          <li>Birstall</li>
+        </ul>
+        <p style={{ fontSize: 15, color: "#555", lineHeight: 1.8 }}>
+          Whether you're a <Link href="/mortgages-for-first-time-buyers/" style={{ color: "#006AC1" }}>first time buyer</Link> in Leicester, a landlord with <Link href="/buy-to-let-mortgages/" style={{ color: "#006AC1" }}>buy-to-let properties</Link> across Leicestershire, or a <Link href="/mortgages-for-self-employed/" style={{ color: "#006AC1" }}>self-employed professional</Link> in Oadby seeking specialist mortgage advice — we're here to help.
+        </p>
       </div>
 
       {/* Commitment section */}

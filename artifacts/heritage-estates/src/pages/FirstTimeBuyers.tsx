@@ -26,10 +26,13 @@ export default function FirstTimeBuyers() {
 
         <h2 style={{ color: "#006AC1", fontSize: 20, marginBottom: 12 }}>The right mortgage for you</h2>
         <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 16 }}>
-          You'll need to decide on the best type of mortgage for your circumstances. This could be a fixed-rate mortgage which will allow you to budget with certainty, since you'll know exactly how much your monthly payments will be. Alternatively you might prefer a tracker or variable mortgage, where your payments can go both up and down depending on the Bank of England base rate.
+          You'll need to decide on the best type of mortgage for your circumstances. This could be a fixed-rate mortgage which will allow you to budget with certainty, since you'll know exactly how much your monthly payments will be. Alternatively you might prefer a tracker or variable mortgage, where your payments can go both up and down depending on the Bank of England base rate. See our <Link href="/faq/">FAQ page</Link> for plain-English explanations of fixed, tracker and variable rate mortgages.
+        </p>
+        <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 16 }}>
+          Finally, you'll need a suitable deposit to place down in order to secure a mortgage. Typically this would be around 20% of the property's value, but this will vary depending on your circumstances. Try our <Link href="/mortgage-calculator/">mortgage calculator</Link> to see how different deposit amounts affect your monthly repayments.
         </p>
         <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 24 }}>
-          Finally, you'll need a suitable deposit to place down in order to secure a mortgage. Typically this would be around 20% of the property's value, but this will vary depending on your circumstances.
+          As a first time buyer, it's also worth considering <Link href="/insurance-protection/">life and income protection insurance</Link> at the same time as your mortgage — it protects your home if you're ever unable to work.
         </p>
 
         <h2 style={{ color: "#006AC1", fontSize: 20, marginBottom: 12 }}>Don't leave it to chance</h2>

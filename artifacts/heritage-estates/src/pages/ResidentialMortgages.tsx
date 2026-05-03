@@ -1,3 +1,4 @@
+import { Link } from "wouter";
 import SeoHead from "@/components/SeoHead";
 import PageWrapper from "@/components/PageWrapper";
 import CommitmentSection from "@/components/CommitmentSection";
@@ -30,11 +31,15 @@ export default function ResidentialMortgages() {
           Heritage Estates have access to the whole of market; this means we're not tied to a specific lender.
         </p>
 
+        <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 24 }}>
+          We also advise on <Link href="/insurance-protection/">mortgage protection insurance</Link> — so you're covered if the unexpected happens. If you're buying for the first time, see our dedicated <Link href="/mortgages-for-first-time-buyers/">first time buyer mortgage</Link> page, or use our <Link href="/mortgage-calculator/">mortgage calculator</Link> to estimate your monthly repayments.
+        </p>
+
         <h3 style={{ color: "#006AC1", marginBottom: 12 }}>How We Work</h3>
         <ul style={{ fontSize: 15, color: "#444", lineHeight: 2, paddingLeft: 20, marginBottom: 32 }}>
           <li>Firstly, we'll arrange a no-obligation consultation at your convenience, to discuss your requirements.</li>
           <li>We'll discuss your existing borrowing and obligations, and look at the appropriate mortgage products available for your new home from a wide range of lenders.</li>
-          <li>Before applying for a mortgage product, we can do calculations to show you the monthly and lifetime costs of a mortgage to check its affordability.</li>
+          <li>Before applying for a mortgage product, we can use our <Link href="/mortgage-calculator/">mortgage calculator</Link> to show you the monthly and lifetime costs of a mortgage to check its affordability.</li>
           <li>When you're happy with a particular mortgage product, we can help you with the application and get an "agreement in principle" from the lender.</li>
           <li>We're available for you to contact should you have a question about your mortgage at a later date.</li>
         </ul>

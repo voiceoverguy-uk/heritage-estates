@@ -1,3 +1,4 @@
+import { Link } from "wouter";
 import SeoHead from "@/components/SeoHead";
 import PageWrapper from "@/components/PageWrapper";
 import CommitmentSection from "@/components/CommitmentSection";
@@ -70,8 +71,11 @@ export default function Remortgaging() {
         <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 12 }}>
           If you remain on the same deal for the full term of the lender's loan you could lose out by paying more money than you need to.
         </p>
-        <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 32 }}>
+        <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 16 }}>
           Furthermore, you might also have the ability to finish your mortgage term earlier than originally planned, thus saving a significant amount of money in interest payments.
+        </p>
+        <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 32 }}>
+          Use our <Link href="/mortgage-calculator/">mortgage calculator</Link> to compare your current deal against what a remortgage could save you. When remortgaging it's also a good time to review your <Link href="/insurance-protection/">insurance and protection</Link> to make sure your cover still matches your circumstances.
         </p>
 
         <CommitmentSection items={remortgageCommitment} />

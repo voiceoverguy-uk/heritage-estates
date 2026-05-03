@@ -19,7 +19,7 @@ export default function InsuranceProtection() {
           You're probably familiar with how to protect your property with buildings and home contents insurance. However, your greatest asset is <strong>YOURSELF!</strong>
         </p>
         <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 32 }}>
-          For most people, a mortgage will be the greatest financial commitment that they ever make. Your home or property investment will usually be reliant on income being generated to support payment of the mortgage.
+          For most people, a <Link href="/residential-mortgages/">residential mortgage</Link> will be the greatest financial commitment that they ever make. Your home or property investment will usually be reliant on income being generated to support payment of the mortgage. This applies equally to <Link href="/buy-to-let-mortgages/">buy-to-let landlords</Link> who depend on rental income.
         </p>
 
         <h2 style={{ color: "#006AC1", fontSize: 20, marginBottom: 12 }}>Is protection only about the mortgage?</h2>

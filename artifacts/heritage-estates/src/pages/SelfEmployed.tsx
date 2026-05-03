@@ -21,8 +21,11 @@ export default function SelfEmployed() {
         <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 16 }}>
           If you're self employed, what usually affects your ability to get a mortgage is being able to prove that your income is sufficient to make the regular loan repayments.
         </p>
+        <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 16 }}>
+          Usually a lender will request to see at least two years' worth of company accounts, SA302s or tax returns. If you're already a homeowner and want to <Link href="/remortgaging/">remortgage</Link>, either to move home or to switch to a better deal, your existing lender may not require as much evidence if you have a good history of making repayments on time.
+        </p>
         <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 32 }}>
-          Usually a lender will request to see at least two years' worth of company accounts, SA302s or tax returns. If you're already a homeowner and want to remortgage, either to move home or to switch to a better deal, your existing lender may not require as much evidence if you have a good history of making repayments on time.
+          If you run your own limited company and pay yourself via salary and dividends, you may benefit from our specialist <Link href="/mortgages-for-company-directors/">mortgages for company directors</Link> service. Use our <Link href="/mortgage-calculator/">mortgage calculator</Link> to get an early estimate of your monthly repayments.
         </p>
 
         <h2 style={{ color: "#006AC1", fontSize: 20, marginBottom: 12 }}>Specialist vs regular lenders</h2>

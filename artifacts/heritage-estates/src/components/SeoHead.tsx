@@ -52,10 +52,17 @@ const localBusinessSchema = {
   ],
   sameAs: [SITE_URL],
   priceRange: "££",
-  areaServed: {
-    "@type": "City",
-    name: "Leicester",
-  },
+  areaServed: [
+    { "@type": "City", name: "Leicester" },
+    { "@type": "City", name: "Oadby" },
+    { "@type": "City", name: "Wigston" },
+    { "@type": "City", name: "Hinckley" },
+    { "@type": "City", name: "Loughborough" },
+    { "@type": "City", name: "Market Harborough" },
+    { "@type": "City", name: "Melton Mowbray" },
+    { "@type": "AdministrativeArea", name: "Leicestershire" },
+    { "@type": "AdministrativeArea", name: "East Midlands" },
+  ],
 };
 
 export default function SeoHead({
