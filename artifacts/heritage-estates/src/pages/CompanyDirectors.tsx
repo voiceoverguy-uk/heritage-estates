@@ -12,6 +12,8 @@ export default function CompanyDirectors() {
         description="Heritage Estates are whole of market mortgage advisers specialising in mortgages for company directors in Leicester and Oadby."
         path="/mortgages-for-company-directors/"
         ogImage="https://heritageestates.co.uk/wp-content/uploads/company-director-mortgages-524x349.jpg"
+        ogImageWidth={524}
+        ogImageHeight={349}
       />
       <PageWrapper regulatory="Your home may be repossessed if you do not keep up repayments on your mortgage.">
         <h1 style={{ color: "#006AC1", marginBottom: 24 }}>Mortgages for Company Directors</h1>

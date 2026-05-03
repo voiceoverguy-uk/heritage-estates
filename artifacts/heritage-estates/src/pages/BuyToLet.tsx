@@ -26,6 +26,8 @@ export default function BuyToLet() {
         description="Heritage Estates offer buy-to-let mortgage advice in Leicester and Oadby. Whole of market access to help you find the right investment property mortgage."
         path="/buy-to-let-mortgages/"
         ogImage="https://heritageestates.co.uk/wp-content/uploads/buy-to-let-mortgages-524x349.jpg"
+        ogImageWidth={524}
+        ogImageHeight={349}
       />
       <PageWrapper regulatory="The Financial Conduct Authority do not regulate some buy to let mortgages.">
         <h1 style={{ color: "#006AC1", marginBottom: 24, letterSpacing: 1 }}>BUY TO LET MORTGAGES</h1>

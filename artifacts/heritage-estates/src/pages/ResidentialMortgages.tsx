@@ -12,6 +12,8 @@ export default function ResidentialMortgages() {
         description="Heritage Estates offer personal residential mortgage services in Leicester and Oadby. Whole of market advisers helping you find the right mortgage."
         path="/residential-mortgages/"
         ogImage="https://heritageestates.co.uk/wp-content/uploads/residential-mortgages-524x349.jpg"
+        ogImageWidth={524}
+        ogImageHeight={349}
       />
       <PageWrapper regulatory="Your home may be repossessed if you do not keep up repayments on your mortgage.">
         <h1 style={{ color: "#006AC1", marginBottom: 24 }}>Residential Mortgages</h1>

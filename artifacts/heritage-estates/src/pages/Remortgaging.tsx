@@ -27,6 +27,8 @@ export default function Remortgaging() {
         description="Heritage Estates help with remortgaging, raising additional capital and re-financing in Leicester and Oadby. Expert whole-of-market mortgage advice."
         path="/remortgaging/"
         ogImage="https://heritageestates.co.uk/wp-content/uploads/remortgage-524x349.jpg"
+        ogImageWidth={524}
+        ogImageHeight={349}
       />
       <PageWrapper regulatory="Think carefully before securing other debts against your home. Your home may be repossessed if you do not keep up repayments on your mortgage.">
         <h1 style={{ color: "#006AC1", marginBottom: 24, letterSpacing: 0.5 }}>REMORTGAGING, RAISING ADDITIONAL CAPITAL AND RE-FINANCING</h1>

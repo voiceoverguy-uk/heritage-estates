@@ -65,6 +65,8 @@ export default function News() {
         path="/news/"
         schemaType="CollectionPage"
         ogImage="https://heritageestates.co.uk/wp-content/uploads/latest-news-mobile-524x349.jpg"
+        ogImageWidth={524}
+        ogImageHeight={349}
       />
       <PageWrapper>
         <h1 style={{ color: "#006AC1", marginBottom: 32 }}>Latest News</h1>

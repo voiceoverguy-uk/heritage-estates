@@ -3,8 +3,13 @@ import { Helmet } from "react-helmet-async";
 const SITE_NAME = "Heritage Estates";
 const SITE_URL = "https://heritageestates.co.uk";
 const DEFAULT_IMAGE = "https://heritageestates.co.uk/wp-content/uploads/mortgages-in-leicester-hero-3.jpg";
+const DEFAULT_IMAGE_WIDTH = 1920;
+const DEFAULT_IMAGE_HEIGHT = 534;
 const LOGO_URL = "https://heritageestates.co.uk/wp-content/uploads/logo-heritage-estates.png";
 const PHONE = "+441162537733";
+const SITE_LAUNCHED = "2017-05-31";
+const SITE_UPDATED = "2026-05-03";
+
 const ADDRESS = {
   streetAddress: "2 Brooksby Drive",
   addressLocality: "Oadby",
@@ -18,10 +23,49 @@ interface SeoHeadProps {
   description: string;
   path: string;
   ogImage?: string;
+  ogImageWidth?: number;
+  ogImageHeight?: number;
   ogType?: "website" | "article";
   schemaType?: "WebPage" | "AboutPage" | "ContactPage" | "FAQPage" | "CollectionPage";
   faqItems?: Array<{ q: string; a: string }>;
+  datePublished?: string;
 }
+
+const organizationSchema = {
+  "@type": "Organization",
+  "@id": `${SITE_URL}/#organization`,
+  name: SITE_NAME,
+  url: SITE_URL,
+  logo: {
+    "@type": "ImageObject",
+    url: LOGO_URL,
+  },
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: PHONE,
+    contactType: "customer service",
+    areaServed: "GB",
+    availableLanguage: "English",
+  },
+};
+
+const webSiteSchema = {
+  "@type": "WebSite",
+  "@id": `${SITE_URL}/#website`,
+  url: SITE_URL,
+  name: SITE_NAME,
+  description: "Independent Mortgage & Insurance Brokers in Leicester and Oadby",
+  inLanguage: "en-GB",
+  publisher: { "@id": `${SITE_URL}/#organization` },
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${SITE_URL}/?s={search_term_string}`,
+    },
+    "query-input": "required name=search_term_string",
+  },
+};
 
 const localBusinessSchema = {
   "@type": "LocalBusiness",
@@ -70,53 +114,63 @@ export default function SeoHead({
   description,
   path,
   ogImage = DEFAULT_IMAGE,
+  ogImageWidth = DEFAULT_IMAGE_WIDTH,
+  ogImageHeight = DEFAULT_IMAGE_HEIGHT,
   ogType = "website",
   schemaType = "WebPage",
   faqItems,
+  datePublished = SITE_LAUNCHED,
 }: SeoHeadProps) {
   const canonicalUrl = `${SITE_URL}${path}`;
+  const imageId = `${canonicalUrl}#primaryimage`;
 
-  const webPageSchema: Record<string, unknown> = {
+  const primaryImage = {
+    "@type": "ImageObject",
+    "@id": imageId,
+    url: ogImage,
+    contentUrl: ogImage,
+    width: ogImageWidth,
+    height: ogImageHeight,
+    caption: title,
+    inLanguage: "en-GB",
+  };
+
+  const webPageNode: Record<string, unknown> = {
+    "@type": schemaType,
+    "@id": canonicalUrl,
+    url: canonicalUrl,
+    name: title,
+    description,
+    datePublished,
+    dateModified: SITE_UPDATED,
+    inLanguage: "en-GB",
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+    primaryImageOfPage: { "@id": imageId },
+    thumbnailUrl: ogImage,
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      "@id": `${canonicalUrl}#breadcrumb`,
+      itemListElement: buildBreadcrumb(path),
+    },
+    potentialAction: {
+      "@type": "ReadAction",
+      target: [canonicalUrl],
+    },
+  };
+
+  const schema = {
     "@context": "https://schema.org",
     "@graph": [
-      {
-        "@type": "Organization",
-        "@id": `${SITE_URL}/#organization`,
-        name: SITE_NAME,
-        url: SITE_URL,
-        logo: {
-          "@type": "ImageObject",
-          url: LOGO_URL,
-        },
-        contactPoint: {
-          "@type": "ContactPoint",
-          telephone: PHONE,
-          contactType: "customer service",
-          areaServed: "GB",
-          availableLanguage: "English",
-        },
-      },
-      {
-        ...localBusinessSchema,
-        "@context": "https://schema.org",
-      },
-      {
-        "@type": schemaType,
-        "@id": canonicalUrl,
-        url: canonicalUrl,
-        name: title,
-        description,
-        isPartOf: { "@id": SITE_URL },
-        inLanguage: "en-GB",
-        breadcrumb: {
-          "@type": "BreadcrumbList",
-          itemListElement: buildBreadcrumb(path),
-        },
-      },
+      organizationSchema,
+      webSiteSchema,
+      localBusinessSchema,
+      primaryImage,
+      webPageNode,
       ...(faqItems
         ? [
             {
               "@type": "FAQPage",
+              "@id": `${canonicalUrl}#faq`,
               mainEntity: faqItems.map(({ q, a }) => ({
                 "@type": "Question",
                 name: q,
@@ -144,8 +198,8 @@ export default function SeoHead({
       <meta property="og:description" content={description} />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:image" content={ogImage} />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
+      <meta property="og:image:width" content={String(ogImageWidth)} />
+      <meta property="og:image:height" content={String(ogImageHeight)} />
       <meta property="og:image:alt" content={`${SITE_NAME} – ${title}`} />
       <meta property="og:locale" content="en_GB" />
 
@@ -158,7 +212,7 @@ export default function SeoHead({
 
       {/* JSON-LD Schema */}
       <script type="application/ld+json">
-        {JSON.stringify(webPageSchema, null, 0)}
+        {JSON.stringify(schema, null, 0)}
       </script>
     </Helmet>
   );

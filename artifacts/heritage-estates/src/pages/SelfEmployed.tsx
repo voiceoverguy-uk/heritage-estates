@@ -11,6 +11,8 @@ export default function SelfEmployed() {
         description="Heritage Estates help self-employed people get mortgage applications approved. Whole of market access to specialist and regular lenders in Leicester."
         path="/mortgages-for-self-employed/"
         ogImage="https://heritageestates.co.uk/wp-content/uploads/mortgages-for-self-employed-524x349.jpg"
+        ogImageWidth={524}
+        ogImageHeight={349}
       />
       <PageWrapper regulatory="Your home may be repossessed if you do not keep up repayments on your mortgage.">
         <h1 style={{ color: "#006AC1", marginBottom: 24, letterSpacing: 1 }}>MORTGAGES FOR SELF EMPLOYED</h1>

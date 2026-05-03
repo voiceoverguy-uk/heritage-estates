@@ -12,6 +12,8 @@ export default function FirstTimeBuyers() {
         description="Heritage Estates help first time buyers navigate the mortgage process in Leicester and Oadby. Get expert advice tailored to your circumstances."
         path="/mortgages-for-first-time-buyers/"
         ogImage="https://heritageestates.co.uk/wp-content/uploads/mortgages-for-first-time-buyers-524x349.jpg"
+        ogImageWidth={524}
+        ogImageHeight={349}
       />
       <PageWrapper regulatory="Your home may be repossessed if you do not keep up repayments on your mortgage.">
         <h1 style={{ color: "#006AC1", marginBottom: 24, letterSpacing: 1 }}>MORTGAGES FOR FIRST TIME BUYERS</h1>
