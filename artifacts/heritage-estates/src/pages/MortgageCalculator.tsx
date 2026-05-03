@@ -1156,6 +1156,267 @@ function ComparisonPanel({ mortgageAmount, rateNum, termNum, mortgageType }: Com
 }
 
 /* ─────────────────────────────────────────────────────────────────
+   HOW MUCH CAN I BORROW? ESTIMATOR
+───────────────────────────────────────────────────────────────── */
+
+type BorrowMode = "single" | "joint";
+
+function BorrowingEstimator() {
+  const [mode,       setMode]       = useState<BorrowMode>("single");
+  const [salary1,    setSalary1]    = useState("");
+  const [salary2,    setSalary2]    = useState("");
+  const [debts,      setDebts]      = useState("");
+  const [dependants, setDependants] = useState("0");
+  const [deposit,    setDeposit]    = useState("");
+  const [tipVisible, setTipVisible] = useState(false);
+
+  const s1 = parseFloat(salary1) || 0;
+  const s2 = mode === "joint" ? (parseFloat(salary2) || 0) : 0;
+  const d  = parseFloat(debts)   || 0;
+  const dep = parseInt(dependants, 10) || 0;
+  const depositVal = parseFloat(deposit) || 0;
+
+  const combined = s1 + s2;
+  const debtAnnual = d * 12;
+  const depDeduction = dep >= 4 ? 4 * 5000 : dep * 5000;
+
+  const upper = Math.max(0, combined * 4.5 - debtAnnual - depDeduction);
+  const lower = Math.max(0, combined * 4.0 - debtAnnual - depDeduction);
+
+  const hasResult = s1 > 0;
+
+  const label: React.CSSProperties = {
+    display: "block",
+    fontSize: 14,
+    fontWeight: 700,
+    color: "#333",
+    marginBottom: 6,
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: "100%",
+    padding: "10px 12px",
+    border: "1px solid #bcd",
+    fontFamily: "'Open Sans', Arial, sans-serif",
+    fontSize: 14,
+    color: "#333",
+    boxSizing: "border-box",
+    borderRadius: 0,
+    outline: "none",
+  };
+
+  const fieldWrap: React.CSSProperties = { marginBottom: 20 };
+
+  return (
+    <div style={{ background: "#fff", border: "1px solid #dde8f5", padding: 28, marginBottom: 36 }}>
+      <h2 style={{ color: "#006AC1", fontSize: 20, marginBottom: 6 }}>How Much Can I Borrow?</h2>
+      <p style={{ fontSize: 14, color: "#555", lineHeight: 1.65, marginBottom: 24 }}>
+        Enter your income details below to get an instant estimate of your borrowing range.
+      </p>
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 32 }}>
+
+        {/* Inputs */}
+        <div style={{ flex: "1 1 280px" }}>
+
+          {/* Single / Joint toggle */}
+          <div style={fieldWrap}>
+            <label style={label}>Application type</label>
+            <div style={{ display: "flex", border: "2px solid #006AC1" }}>
+              {(["single", "joint"] as BorrowMode[]).map((m, i) => (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => setMode(m)}
+                  style={{
+                    flex: 1,
+                    padding: "10px 16px",
+                    background: mode === m ? "#006AC1" : "#fff",
+                    color: mode === m ? "#fff" : "#006AC1",
+                    border: "none",
+                    borderLeft: i > 0 ? "2px solid #006AC1" : "none",
+                    fontFamily: "'Open Sans', Arial, sans-serif",
+                    fontSize: 14,
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    textTransform: "capitalize",
+                    borderRadius: 0,
+                  }}
+                >
+                  {m}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Applicant 1 salary */}
+          <div style={fieldWrap}>
+            <label style={label}>
+              {mode === "joint" ? "Applicant 1 " : ""}Gross annual salary (£)
+            </label>
+            <input
+              type="number"
+              min="0"
+              value={salary1}
+              onChange={(e) => setSalary1(e.target.value)}
+              placeholder="e.g. 45000"
+              style={inputStyle}
+            />
+          </div>
+
+          {/* Applicant 2 salary — joint only */}
+          {mode === "joint" && (
+            <div style={fieldWrap}>
+              <label style={label}>Applicant 2 gross annual salary (£)</label>
+              <input
+                type="number"
+                min="0"
+                value={salary2}
+                onChange={(e) => setSalary2(e.target.value)}
+                placeholder="e.g. 35000"
+                style={inputStyle}
+              />
+            </div>
+          )}
+
+          {/* Monthly debt commitments */}
+          <div style={fieldWrap}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+              <label style={{ ...label, marginBottom: 0 }}>Monthly debt commitments (£)</label>
+              <span
+                style={{ position: "relative", display: "inline-block" }}
+                onMouseEnter={() => setTipVisible(true)}
+                onMouseLeave={() => setTipVisible(false)}
+              >
+                <span style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 18,
+                  height: 18,
+                  background: "#006AC1",
+                  color: "#fff",
+                  borderRadius: "50%",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  cursor: "default",
+                  userSelect: "none",
+                }}>?</span>
+                {tipVisible && (
+                  <span style={{
+                    position: "absolute",
+                    bottom: "calc(100% + 6px)",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    background: "#333",
+                    color: "#fff",
+                    fontSize: 12,
+                    lineHeight: 1.5,
+                    padding: "8px 12px",
+                    whiteSpace: "nowrap",
+                    zIndex: 10,
+                    pointerEvents: "none",
+                  }}>
+                    Include car finance, loans, and credit cards
+                  </span>
+                )}
+              </span>
+            </div>
+            <input
+              type="number"
+              min="0"
+              value={debts}
+              onChange={(e) => setDebts(e.target.value)}
+              placeholder="e.g. 300"
+              style={inputStyle}
+            />
+          </div>
+
+          {/* Number of dependants */}
+          <div style={fieldWrap}>
+            <label style={label}>Number of dependants</label>
+            <select
+              value={dependants}
+              onChange={(e) => setDependants(e.target.value)}
+              style={{ ...inputStyle, background: "#fff", cursor: "pointer" }}
+            >
+              {["0", "1", "2", "3", "4+"].map((n) => (
+                <option key={n} value={n === "4+" ? "4" : n}>{n}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Optional deposit */}
+          <div style={fieldWrap}>
+            <label style={label}>Deposit amount (£) — optional</label>
+            <input
+              type="number"
+              min="0"
+              value={deposit}
+              onChange={(e) => setDeposit(e.target.value)}
+              placeholder="e.g. 30000"
+              style={inputStyle}
+            />
+          </div>
+        </div>
+
+        {/* Output */}
+        <div style={{ flex: "1 1 260px" }}>
+          {hasResult ? (
+            <div style={{ background: "#f0f6ff", border: "1px solid #dde8f5", padding: 24 }}>
+              <p style={{ fontSize: 13, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 12 }}>
+                Estimated borrowing range
+              </p>
+              <p style={{ fontSize: 28, fontWeight: 700, color: "#006AC1", marginBottom: 4 }}>
+                £{fmtInt(lower)} — £{fmtInt(upper)}
+              </p>
+
+              {depositVal > 0 && (
+                <>
+                  <div style={{ borderTop: "1px solid #dde8f5", margin: "16px 0" }} />
+                  <p style={{ fontSize: 13, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8 }}>
+                    Estimated maximum purchase price
+                  </p>
+                  <p style={{ fontSize: 22, fontWeight: 700, color: "#006AC1", marginBottom: 4 }}>
+                    £{fmtInt(lower + depositVal)} — £{fmtInt(upper + depositVal)}
+                  </p>
+                </>
+              )}
+
+              <p style={{ fontSize: 12, color: "#888", lineHeight: 1.6, marginTop: 16 }}>
+                This is an estimate based on standard income multiples. Actual lending depends on your
+                credit history, lender criteria, and full affordability assessment.
+              </p>
+
+              <Link
+                href="/mortgage-broker-leicester/"
+                style={{
+                  display: "block",
+                  marginTop: 20,
+                  padding: "12px 16px",
+                  background: "#006AC1",
+                  color: "#fff",
+                  fontWeight: 700,
+                  fontSize: 14,
+                  textAlign: "center",
+                  textDecoration: "none",
+                }}
+              >
+                Get an accurate figure — speak to our broker →
+              </Link>
+            </div>
+          ) : (
+            <div style={{ background: "#f7faff", border: "1px solid #dde8f5", padding: 24, textAlign: "center", color: "#aaa", fontSize: 14, lineHeight: 1.7 }}>
+              Enter your salary above to see your estimated borrowing range.
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────
    PAGE  — all shared state lives here
 ───────────────────────────────────────────────────────────────── */
 
@@ -1197,6 +1458,10 @@ export default function MortgageCalculatorPage() {
         <h1 style={{ color: "#006AC1", marginBottom: 20 }}>
           {activeTab === "mortgage" ? "Mortgage Calculator" : "Stamp Duty Calculator (SDLT)"}
         </h1>
+
+        <BorrowingEstimator />
+
+        <div style={{ borderTop: "2px solid #dde8f5", marginBottom: 36 }} />
 
         {/* Tab bar */}
         <div style={{ display: "flex", border: "2px solid #006AC1", marginBottom: 36, maxWidth: 480 }}>
