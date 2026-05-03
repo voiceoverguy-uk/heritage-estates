@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 
 const serviceLinks = [
@@ -27,6 +27,13 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 4);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const isActive = (href: string) => {
     if (href === "/") return location === "/";
@@ -35,123 +42,171 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", fontFamily: "'Open Sans', Arial, sans-serif" }}>
-      {/* Top announcement bar */}
-      <div className="he-top-bar">
-        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 16px", display: "flex", alignItems: "center", gap: 6 }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#006AC1" style={{ flexShrink: 0 }}>
-            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
-          </svg>
-          <span style={{ color: "#555", fontSize: 13 }}>
-            Call us for a no-obligation chat | <a href="tel:01162537733" style={{ color: "#006AC1", fontWeight: 600 }}>0116 253 7733</a>
-          </span>
+
+      {/* Sticky header wrapper */}
+      <div
+        className="he-sticky-header"
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 1000,
+          background: "#fff",
+          boxShadow: scrolled ? "0 2px 8px rgba(0,0,0,0.12)" : "none",
+          transition: "box-shadow 0.2s",
+        }}
+      >
+        {/* Top bar */}
+        <div className="he-top-bar">
+          {/* Desktop top bar — 3 columns */}
+          <div className="he-top-bar-desktop" style={{ maxWidth: 1100, margin: "0 auto", padding: "0 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <a href="tel:01162537733" style={{ color: "#006AC1", fontWeight: 700, fontSize: 13, textDecoration: "none", display: "flex", alignItems: "center", gap: 6 }}>
+              📞 0116 253 7733
+            </a>
+            <span style={{ color: "#555", fontSize: 13 }}>Mon–Fri 9am–5:30pm</span>
+            <a
+              href="/contact/"
+              style={{
+                color: "#006AC1",
+                border: "1px solid #006AC1",
+                padding: "3px 12px",
+                fontSize: 13,
+                fontWeight: 600,
+                textDecoration: "none",
+                display: "inline-block",
+              }}
+            >
+              Book a Callback
+            </a>
+          </div>
+
+          {/* Mobile top bar — tap-to-call button */}
+          <div className="he-top-bar-mobile" style={{ padding: "6px 12px" }}>
+            <a
+              href="tel:01162537733"
+              style={{
+                display: "block",
+                width: "100%",
+                background: "#006AC1",
+                color: "#fff",
+                textAlign: "center",
+                padding: "10px 0",
+                fontWeight: 700,
+                fontSize: 15,
+                textDecoration: "none",
+                borderRadius: 0,
+              }}
+            >
+              📞 Call 0116 253 7733
+            </a>
+          </div>
         </div>
-      </div>
 
-      {/* Main header */}
-      <div className="he-nav-top">
-        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-          {/* Logo */}
-          <Link href="/">
-            <img
-              src="https://heritageestates.co.uk/wp-content/uploads/logo-heritage-estates.png"
-              alt="Heritage Estates"
-              style={{ height: 70, cursor: "pointer" }}
-            />
-          </Link>
+        {/* Main header */}
+        <div className="he-nav-top">
+          <div style={{ maxWidth: 1100, margin: "0 auto", padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+            {/* Logo */}
+            <Link href="/">
+              <img
+                src="https://heritageestates.co.uk/wp-content/uploads/logo-heritage-estates.png"
+                alt="Heritage Estates"
+                style={{ height: 70, cursor: "pointer" }}
+              />
+            </Link>
 
-          {/* Top nav links */}
-          <nav className="desktop-nav-top" style={{ display: "flex", gap: 0, flexWrap: "wrap" }}>
-            {topLinks.map((link) => (
+            {/* Top nav links */}
+            <nav className="desktop-nav-top" style={{ display: "flex", gap: 0, flexWrap: "wrap" }}>
+              {topLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  style={{
+                    padding: "6px 14px",
+                    fontSize: 14,
+                    color: isActive(link.href) ? "#fff" : "#006AC1",
+                    backgroundColor: isActive(link.href) ? "#006AC1" : "transparent",
+                    fontWeight: 600,
+                    textDecoration: "none",
+                    transition: "all 0.2s",
+                    display: "inline-block",
+                  }}
+                  onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                    if (!isActive(link.href)) {
+                      (e.target as HTMLElement).style.backgroundColor = "#f0f6ff";
+                    }
+                  }}
+                  onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                    if (!isActive(link.href)) {
+                      (e.target as HTMLElement).style.backgroundColor = "transparent";
+                    }
+                  }}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+
+            {/* Mobile hamburger */}
+            <button
+              className="mobile-menu"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              style={{ background: "none", border: "1px solid #006AC1", padding: "6px 10px", cursor: "pointer", color: "#006AC1" }}
+            >
+              ☰ Menu
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile menu dropdown */}
+        {mobileOpen && (
+          <div style={{ background: "#fff", borderBottom: "2px solid #006AC1", padding: "8px 16px" }}>
+            {[...topLinks, ...serviceLinks].map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={() => setMobileOpen(false)}
+                style={{ display: "block", padding: "8px 0", color: "#006AC1", fontSize: 14, fontWeight: 600, borderBottom: "1px solid #eee", textDecoration: "none" }}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {/* Services navigation bar */}
+        <div className="he-nav-services">
+          <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 16px", display: "flex", flexWrap: "wrap" }}>
+            {serviceLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`he-nav-services-link${isActive(link.href) ? " active" : ""}`}
                 style={{
-                  padding: "6px 14px",
+                  padding: "10px 14px",
                   fontSize: 14,
+                  fontWeight: 600,
                   color: isActive(link.href) ? "#fff" : "#006AC1",
                   backgroundColor: isActive(link.href) ? "#006AC1" : "transparent",
-                  fontWeight: 600,
                   textDecoration: "none",
-                  transition: "all 0.2s",
                   display: "inline-block",
+                  transition: "all 0.2s",
                 }}
                 onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
                   if (!isActive(link.href)) {
-                    (e.target as HTMLElement).style.backgroundColor = "#f0f6ff";
+                    (e.target as HTMLElement).style.backgroundColor = "#006AC1";
+                    (e.target as HTMLElement).style.color = "#fff";
                   }
                 }}
                 onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => {
                   if (!isActive(link.href)) {
                     (e.target as HTMLElement).style.backgroundColor = "transparent";
+                    (e.target as HTMLElement).style.color = "#006AC1";
                   }
                 }}
               >
                 {link.label}
               </Link>
             ))}
-          </nav>
-
-          {/* Mobile hamburger */}
-          <button
-            className="mobile-menu"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            style={{ background: "none", border: "1px solid #006AC1", padding: "6px 10px", cursor: "pointer", color: "#006AC1" }}
-          >
-            ☰ Menu
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile menu dropdown */}
-      {mobileOpen && (
-        <div style={{ background: "#fff", borderBottom: "2px solid #006AC1", padding: "8px 16px" }}>
-          {[...topLinks, ...serviceLinks].map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setMobileOpen(false)}
-              style={{ display: "block", padding: "8px 0", color: "#006AC1", fontSize: 14, fontWeight: 600, borderBottom: "1px solid #eee", textDecoration: "none" }}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
-      )}
-
-      {/* Services navigation bar */}
-      <div className="he-nav-services">
-        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 16px", display: "flex", flexWrap: "wrap" }}>
-          {serviceLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`he-nav-services-link${isActive(link.href) ? " active" : ""}`}
-              style={{
-                padding: "10px 14px",
-                fontSize: 14,
-                fontWeight: 600,
-                color: isActive(link.href) ? "#fff" : "#006AC1",
-                backgroundColor: isActive(link.href) ? "#006AC1" : "transparent",
-                textDecoration: "none",
-                display: "inline-block",
-                transition: "all 0.2s",
-              }}
-              onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                if (!isActive(link.href)) {
-                  (e.target as HTMLElement).style.backgroundColor = "#006AC1";
-                  (e.target as HTMLElement).style.color = "#fff";
-                }
-              }}
-              onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                if (!isActive(link.href)) {
-                  (e.target as HTMLElement).style.backgroundColor = "transparent";
-                  (e.target as HTMLElement).style.color = "#006AC1";
-                }
-              }}
-            >
-              {link.label}
-            </Link>
-          ))}
+          </div>
         </div>
       </div>
 

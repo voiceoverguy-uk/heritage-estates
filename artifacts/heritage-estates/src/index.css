@@ -66,6 +66,7 @@
   h1, h2, h3, h4, h5, h6 {
     color: #006AC1;
     font-family: 'Open Sans', Arial, sans-serif;
+    scroll-margin-top: 155px;
   }
   a {
     color: #006AC1;
@@ -88,6 +89,14 @@
   border-bottom: 1px solid #ddd;
   font-size: 13px;
   padding: 6px 0;
+}
+
+.he-top-bar-desktop {
+  display: flex;
+}
+
+.he-top-bar-mobile {
+  display: none;
 }
 
 .he-nav-top {
@@ -340,6 +349,11 @@
     height: 220px;
   }
   .desktop-nav-top { display: none !important; }
+
+  /* Top bar: swap desktop layout for mobile tap-to-call */
+  .he-top-bar-desktop { display: none !important; }
+  .he-top-bar-mobile  { display: block !important; }
+  .he-top-bar { padding: 0; }
 }
 
 /* ── Print / Save as PDF ──────────────────────────────────────────────────── */
