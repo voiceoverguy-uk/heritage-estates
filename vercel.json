@@ -1,0 +1,9 @@
+{
+  "framework": null,
+  "installCommand": "pnpm install",
+  "buildCommand": "pnpm --filter @workspace/heritage-estates run build",
+  "outputDirectory": "artifacts/heritage-estates/dist/public",
+  "rewrites": [
+    { "source": "/((?!.*\\.).*)", "destination": "/index.html" }
+  ]
+}
