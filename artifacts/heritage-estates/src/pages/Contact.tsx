@@ -10,7 +10,7 @@ const services = [
   "Remortgage",
   "Self Employed",
   "Company Director",
-  "Insurance / Protection",
+  "Insurance/Protection",
   "Other",
 ];
 

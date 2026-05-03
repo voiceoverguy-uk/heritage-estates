@@ -324,7 +324,7 @@ export default function MortgageCalculator() {
                       ⚠ Stress Test at {stressRateNum}%
                     </p>
                     <div className="he-result-item" style={{ borderBottom: "none", padding: 0 }}>
-                      <span className="he-result-label" style={{ color: "#dc2626" }}>Stressed Monthly Payment</span>
+                      <span className="he-result-label" style={{ color: "#dc2626" }}>Stressed Monthly Repayment</span>
                       <span className="he-result-value he-result-stressed">£{fmt(stressedMonthly)}</span>
                     </div>
                     <p style={{ fontSize: 12, color: "#dc2626", marginTop: 8, marginBottom: 0 }}>
