@@ -96,7 +96,7 @@ const localBusinessSchema = {
   ],
   sameAs: [SITE_URL],
   priceRange: "££",
-  additionalType: "https://schema.org/FinancialService",
+  additionalType: "https://schema.org/MortgageBroker",
   serviceType: [
     "Residential Mortgages",
     "Buy-To-Let Mortgages",
@@ -168,12 +168,55 @@ export default function SeoHead({
     },
   };
 
+  const mortgageBrokerSchema = {
+    "@type": "MortgageBroker",
+    "@id": `${SITE_URL}/#mortgagebroker`,
+    name: SITE_NAME,
+    url: SITE_URL,
+    telephone: PHONE,
+    address: {
+      "@type": "PostalAddress",
+      ...ADDRESS,
+    },
+    description:
+      "Heritage Estates are FCA-authorised independent mortgage brokers based in Oadby, Leicester, providing whole-of-market mortgage advice across Leicestershire and the East Midlands.",
+    areaServed: [
+      { "@type": "City", name: "Leicester" },
+      { "@type": "City", name: "Oadby" },
+      { "@type": "City", name: "Wigston" },
+      { "@type": "City", name: "Hinckley" },
+      { "@type": "City", name: "Loughborough" },
+      { "@type": "City", name: "Market Harborough" },
+      { "@type": "City", name: "Melton Mowbray" },
+      { "@type": "AdministrativeArea", name: "Leicestershire" },
+      { "@type": "AdministrativeArea", name: "East Midlands" },
+    ],
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Mortgage & Protection Services",
+      itemListElement: [
+        "Residential Mortgages",
+        "Buy-To-Let Mortgages",
+        "Remortgages",
+        "First-Time Buyer Mortgages",
+        "Self-Employed Mortgages",
+        "Company Director Mortgages",
+        "Insurance & Protection",
+      ].map((name) => ({
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name },
+      })),
+    },
+    parentOrganization: { "@id": `${SITE_URL}/#organization` },
+  };
+
   const schema = {
     "@context": "https://schema.org",
     "@graph": [
       organizationSchema,
       webSiteSchema,
       localBusinessSchema,
+      mortgageBrokerSchema,
       primaryImage,
       webPageNode,
       ...(faqItems

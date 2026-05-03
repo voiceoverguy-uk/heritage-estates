@@ -899,6 +899,15 @@ function MortgageCalc(props: MortgageCalcProps) {
           </div>
         </div>
       </div>
+      {/* Repayment vs Interest Only — at a glance */}
+      {hasResults && (
+        <ComparisonPanel
+          mortgageAmount={mortgageAmount}
+          rateNum={rateNum}
+          termNum={termNum}
+          mortgageType={mortgageType}
+        />
+      )}
     </div>
   );
 }
@@ -1067,15 +1076,6 @@ function StampDutyCalculator({ propertyRef, price, setPrice, buyerType, setBuyer
           </div>
         </div>
       </div>
-      {/* Repayment vs Interest Only — at a glance */}
-      {hasResults && (
-        <ComparisonPanel
-          mortgageAmount={mortgageAmount}
-          rateNum={rateNum}
-          termNum={termNum}
-          mortgageType={mortgageType}
-        />
-      )}
     </div>
   );
 }

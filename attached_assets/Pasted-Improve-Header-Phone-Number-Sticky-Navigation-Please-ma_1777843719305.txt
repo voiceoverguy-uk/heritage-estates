@@ -1,0 +1,22 @@
+Improve Header Phone Number & Sticky Navigation
+Please make the following changes to the header and navigation on the Heritage Estates website. Do not break any existing functionality or styling.
+
+CHANGE 1: Make the header sticky
+Make the entire header — including the top bar with the phone number, the logo/main navigation row, and the secondary services navigation row — sticky so it remains fixed at the top of the page as the user scrolls down on every page of the site.
+Add a subtle box shadow when the header is in sticky/scrolled state so it lifts visually from the page content. The background should remain solid (not transparent) when sticky so page content scrolling behind it is not visible.
+
+CHANGE 2: Upgrade the top bar
+The current top bar shows: Call us for a no-obligation chat | 0116 253 7733
+Replace this with the following layout, keeping the same bar style and colour:
+Left side: 📞 0116 253 7733
+Centre: Mon–Fri 9am–5:30pm
+Right side: A small button or link styled as a ghost/outline button labelled "Book a Callback" that links to the Contact Us page
+Keep all three elements on one line on desktop. On mobile, collapse to just the phone number as a large tap-to-call button (full anchor tag with href="tel:01162537733") and hide the hours and callback button to keep it clean.
+
+CHANGE 3: Mobile tap-to-call
+On mobile screens, make the phone number in the top bar a prominent tap-to-call button. Style it as a solid blue button spanning most of the top bar width with the text 📞 Call 0116 253 7733. Use href="tel:01162537733" so tapping it opens the phone dialler directly.
+
+CHANGE 4: Add scroll padding compensation
+Because the header is now sticky, add appropriate scroll-margin-top or scroll-padding-top to any anchor link targets on the page so that jumping to a section does not hide content behind the fixed header. Calculate this based on the actual header height.
+
+That is all four changes. Please do not alter any page content, calculator functionality, or footer. Only the header and top bar should be affected.
