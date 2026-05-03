@@ -4,11 +4,17 @@ import SeoHead from "@/components/SeoHead";
 import PageWrapper from "@/components/PageWrapper";
 
 /* ─────────────────────────────────────────────────────────────────
-   MORTGAGE CALCULATOR LOGIC
+   TYPES
 ───────────────────────────────────────────────────────────────── */
 
 type MortgageType = "repayment" | "interest-only";
 type DepositMode  = "amount" | "percent";
+type BuyerType    = "main-residence" | "first-time-buyer" | "investor";
+type CalcTab      = "mortgage" | "stamp-duty";
+
+/* ─────────────────────────────────────────────────────────────────
+   MORTGAGE LOGIC
+───────────────────────────────────────────────────────────────── */
 
 function calcRepayment(principal: number, annualRate: number, termYears: number): number {
   if (principal <= 0 || termYears <= 0) return 0;
@@ -27,55 +33,47 @@ function fmt(n: number): string {
   return n.toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+function fmtInt(n: number): string {
+  return n.toLocaleString("en-GB", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
 /* ─────────────────────────────────────────────────────────────────
-   SDLT CALCULATOR LOGIC
-   Rates: England & Northern Ireland post 1 April 2025
-   Source: https://www.gov.uk/stamp-duty-land-tax
+   SDLT LOGIC  — England & N. Ireland, post 1 April 2025
 ───────────────────────────────────────────────────────────────── */
 
-type BuyerType = "main-residence" | "investor" | "first-time-buyer";
-
 interface Band { from: number; to: number; rate: number; }
+interface SDLTBandResult { from: number; to: number; rate: number; tax: number; }
 
-// Main Residence — standard rates from 1 April 2025
 const MAIN_RESIDENCE_BANDS: Band[] = [
-  { from: 0,       to: 125_000,  rate: 0  },
-  { from: 125_000, to: 250_000,  rate: 2  },
-  { from: 250_000, to: 925_000,  rate: 5  },
-  { from: 925_000, to: 1_500_000, rate: 10 },
-  { from: 1_500_000, to: Infinity, rate: 12 },
+  { from: 0,         to: 125_000,   rate: 0  },
+  { from: 125_000,   to: 250_000,   rate: 2  },
+  { from: 250_000,   to: 925_000,   rate: 5  },
+  { from: 925_000,   to: 1_500_000, rate: 10 },
+  { from: 1_500_000, to: Infinity,  rate: 12 },
 ];
 
-// Investor / Additional Property — standard rates + 5% surcharge
 const INVESTOR_BANDS: Band[] = [
-  { from: 0,       to: 125_000,  rate: 5  },
-  { from: 125_000, to: 250_000,  rate: 7  },
-  { from: 250_000, to: 925_000,  rate: 10 },
-  { from: 925_000, to: 1_500_000, rate: 15 },
-  { from: 1_500_000, to: Infinity, rate: 17 },
+  { from: 0,         to: 125_000,   rate: 5  },
+  { from: 125_000,   to: 250_000,   rate: 7  },
+  { from: 250_000,   to: 925_000,   rate: 10 },
+  { from: 925_000,   to: 1_500_000, rate: 15 },
+  { from: 1_500_000, to: Infinity,  rate: 17 },
 ];
 
-// First-Time Buyer — 0% to £300k, 5% £300k–£500k
-// Above £500k: no relief, use main residence rates
 const FTB_BANDS: Band[] = [
   { from: 0,       to: 300_000, rate: 0 },
   { from: 300_000, to: 500_000, rate: 5 },
 ];
 
-interface SDLTBandResult { from: number; to: number; rate: number; tax: number; }
-
 function calcSDLT(price: number, buyerType: BuyerType) {
   if (price <= 0) return { bands: [] as SDLTBandResult[], total: 0, ftbExceeds: false };
-
   const ftbExceeds = buyerType === "first-time-buyer" && price > 500_000;
   const bands =
-    buyerType === "investor"            ? INVESTOR_BANDS :
-    buyerType === "first-time-buyer" && !ftbExceeds ? FTB_BANDS :
+    buyerType === "investor"                          ? INVESTOR_BANDS :
+    buyerType === "first-time-buyer" && !ftbExceeds  ? FTB_BANDS :
     MAIN_RESIDENCE_BANDS;
-
   const result: SDLTBandResult[] = [];
   let total = 0;
-
   for (const band of bands) {
     if (price <= band.from) break;
     const ceiling = band.to === Infinity ? price : band.to;
@@ -85,27 +83,20 @@ function calcSDLT(price: number, buyerType: BuyerType) {
     result.push({ from: band.from, to: Math.min(price, ceiling), rate: band.rate, tax });
     total += tax;
   }
-
   return { bands: result, total, ftbExceeds };
 }
 
-// Format a band boundary value for display (£125k, £1.5m etc.)
 function fmtBoundary(n: number): string {
-  if (n >= 1_000_000) {
-    const m = n / 1_000_000;
-    return `£${m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)}m`;
-  }
+  if (n >= 1_000_000) { const m = n / 1_000_000; return `£${m % 1 === 0 ? m.toFixed(0) : m.toFixed(1)}m`; }
   if (n >= 1_000) return `£${(n / 1_000).toFixed(0)}k`;
   return `£${n}`;
 }
 
-function fmtInt(n: number): string {
-  return n.toLocaleString("en-GB", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-}
-
-/* ─────────────────────────────────────────────────────────────────
-   BUYER TYPE INFO TEXT
-───────────────────────────────────────────────────────────────── */
+const BUYER_LABEL: Record<BuyerType, string> = {
+  "main-residence":   "Main Residence",
+  "first-time-buyer": "First-Time Buyer",
+  "investor":         "Second Home / Investor",
+};
 
 const BUYER_INFO: Record<BuyerType, { heading: string; text: string }> = {
   "main-residence": {
@@ -117,8 +108,8 @@ const BUYER_INFO: Record<BuyerType, { heading: string; text: string }> = {
     text: "First-time buyers pay no SDLT on the first £300,000. Between £300,001 and £500,000, a 5% rate applies on that portion only. Properties above £500,000 do not qualify for first-time buyer relief — standard rates apply instead.",
   },
   "investor": {
-    heading: "SDLT — INVESTOR / ADDITIONAL PROPERTY",
-    text: "Investors and additional property buyers pay a 5% surcharge on top of standard rates at every band. SDLT starts at 5% from £0 (there is no 0% band), rising to 7% on £125,001–£250,000, and 10% on £250,001–£925,000.",
+    heading: "SDLT — SECOND HOME / INVESTOR",
+    text: "Second home and investment property buyers pay a 5% surcharge on top of standard rates at every band. SDLT starts at 5% from £0 (there is no 0% band), rising to 7% on £125,001–£250,000, and 10% on £250,001–£925,000.",
   },
 };
 
@@ -143,204 +134,91 @@ function tabBtn(active: boolean, extra?: React.CSSProperties): React.CSSProperti
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   STAMP DUTY CALCULATOR
+   BUYER TYPE BUTTONS  — reused in both tabs
 ───────────────────────────────────────────────────────────────── */
 
-function StampDutyCalculator() {
-  const [price, setPrice] = useState("");
-  const [buyerType, setBuyerType] = useState<BuyerType>("main-residence");
+const BUYER_BUTTONS: { key: BuyerType; label: string }[] = [
+  { key: "main-residence",   label: "Main Residence"         },
+  { key: "first-time-buyer", label: "First-Time Buyer"       },
+  { key: "investor",         label: "Second Home / Investor" },
+];
 
-  const priceNum = parseFloat(price.replace(/,/g, "")) || 0;
-  const { bands, total, ftbExceeds } = calcSDLT(priceNum, buyerType);
-  const hasResult = priceNum > 0;
-  const info = BUYER_INFO[buyerType];
+interface BuyerTypeSelectorProps {
+  value: BuyerType;
+  onChange: (v: BuyerType) => void;
+}
 
-  const buyerButtons: { key: BuyerType; label: string }[] = [
-    { key: "main-residence",   label: "Main Residence"   },
-    { key: "investor",         label: "Investor"         },
-    { key: "first-time-buyer", label: "First-Time Buyer" },
-  ];
-
+function BuyerTypeSelector({ value, onChange }: BuyerTypeSelectorProps) {
   return (
-    <div>
-      <p style={{ fontSize: 15, color: "#555", marginBottom: 28, lineHeight: 1.7 }}>
-        Instantly calculate Stamp Duty Land Tax (SDLT) for main residences, first-time buyers and
-        investors. Rates based on current GOV.UK guidance for England &amp; Northern Ireland.
-      </p>
-
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 32 }}>
-
-        {/* ── Inputs ── */}
-        <div style={{ flex: "1 1 300px" }}>
-          <div style={{ background: "#fff", border: "1px solid #dde8f5", padding: 28 }}>
-            <h2 style={{ fontSize: 18, fontWeight: 700, color: "#333", marginBottom: 24 }}>
-              Property Details
-            </h2>
-
-            <div className="he-form-field">
-              <label>Asking Price (£)</label>
-              <input
-                type="number"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                placeholder="e.g. 250000"
-                min="0"
-              />
-            </div>
-
-            <div style={{ marginTop: 8 }}>
-              <label style={{ display: "block", fontSize: 14, fontWeight: 700, color: "#333", marginBottom: 10 }}>
-                Buyer Type
-              </label>
-              <div style={{ display: "flex", border: "2px solid #006AC1" }}>
-                {buyerButtons.map(({ key, label }, i) => (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => setBuyerType(key)}
-                    style={tabBtn(buyerType === key, {
-                      borderLeft: i > 0 ? "2px solid #006AC1" : "none",
-                      fontSize: 12,
-                      padding: "10px 6px",
-                    })}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Results ── */}
-        <div style={{ flex: "1 1 320px" }}>
-          <div style={{ background: "#fff", border: "1px solid #dde8f5", padding: 28, minHeight: 260 }}>
-            <h2 style={{ fontSize: 18, fontWeight: 700, color: "#333", marginBottom: 4 }}>
-              SDLT Calculation
-            </h2>
-            <p style={{ fontSize: 13, color: "#888", marginBottom: 20 }}>
-              Rates based on current GOV.UK guidance (England &amp; Northern Ireland).
-            </p>
-
-            {hasResult ? (
-              <>
-                <p style={{
-                  fontSize: 12, fontWeight: 700, color: "#555", letterSpacing: 0.6,
-                  textTransform: "uppercase", marginBottom: 14,
-                }}>
-                  {ftbExceeds
-                    ? "SDLT — MAIN RESIDENCE (FTB relief not applicable above £500,000)"
-                    : info.heading}
-                </p>
-
-                {/* Band table */}
-                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14, marginBottom: 12 }}>
-                  <thead>
-                    <tr style={{ borderBottom: "2px solid #dde8f5" }}>
-                      <th style={{ textAlign: "left",  padding: "6px 0", color: "#555", fontWeight: 700 }}>Band</th>
-                      <th style={{ textAlign: "right", padding: "6px 0", color: "#555", fontWeight: 700 }}>Rate</th>
-                      <th style={{ textAlign: "right", padding: "6px 0", color: "#555", fontWeight: 700 }}>Tax</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {bands.map((b, i) => (
-                      <tr key={i} style={{ borderBottom: "1px solid #f0f4fa" }}>
-                        <td style={{ padding: "8px 0", color: "#444" }}>
-                          {fmtBoundary(b.from)} – {fmtBoundary(b.to)}
-                        </td>
-                        <td style={{ padding: "8px 0", textAlign: "right", color: "#444" }}>{b.rate}%</td>
-                        <td style={{ padding: "8px 0", textAlign: "right", color: "#444" }}>£{fmtInt(b.tax)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-                {/* Total row */}
-                <div style={{
-                  display: "flex", justifyContent: "space-between", alignItems: "center",
-                  borderTop: "2px solid #006AC1", paddingTop: 12, marginBottom: 20,
-                }}>
-                  <span style={{ fontWeight: 700, fontSize: 15, color: "#333" }}>Total SDLT</span>
-                  <span style={{ fontWeight: 700, fontSize: 22, color: total === 0 ? "#16a34a" : "#006AC1" }}>
-                    £{fmtInt(total)}
-                  </span>
-                </div>
-
-                {/* Info box */}
-                <div style={{ borderLeft: "4px solid #006AC1", paddingLeft: 12 }}>
-                  <p style={{ fontSize: 13, color: "#555", margin: "0 0 8px", lineHeight: 1.65 }}>
-                    {ftbExceeds
-                      ? "This property exceeds £500,000, so first-time buyer relief does not apply. Standard main residence rates are used instead."
-                      : info.text}
-                  </p>
-                  <a
-                    href="https://www.gov.uk/stamp-duty-land-tax"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ fontSize: 13, color: "#006AC1", fontWeight: 700, textDecoration: "none" }}
-                  >
-                    Verify on GOV.UK →
-                  </a>
-                </div>
-              </>
-            ) : (
-              <div style={{ textAlign: "center", padding: "40px 0" }}>
-                <div style={{ fontSize: 44, marginBottom: 12, color: "#dde8f5" }}>🏷️</div>
-                <p style={{ color: "#888", fontSize: 14, lineHeight: 1.7 }}>
-                  Enter a property price to see your SDLT breakdown.
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Disclaimer */}
-          <div style={{ marginTop: 16, padding: "14px 16px", background: "#fff8e1", borderLeft: "4px solid #f59e0b", fontSize: 13, color: "#666", lineHeight: 1.6 }}>
-            <p style={{ margin: "0 0 4px", fontWeight: 700, color: "#555" }}>Important</p>
-            <p style={{ margin: 0 }}>
-              This calculator covers England &amp; Northern Ireland SDLT only. Scotland uses Land and
-              Buildings Transaction Tax (LBTT) and Wales uses Land Transaction Tax (LTT). Always verify
-              figures with your solicitor before exchanging contracts.
-            </p>
-          </div>
-
-          {/* CTA */}
-          <div style={{ marginTop: 16, background: "#006AC1", padding: "20px 24px", textAlign: "center" }}>
-            <p style={{ color: "#fff", fontSize: 15, fontWeight: 600, marginBottom: 12 }}>
-              Want personalised advice?
-            </p>
-            <Link
-              href="/contact/"
-              style={{ background: "#fff", color: "#006AC1", padding: "10px 24px", fontWeight: 700, fontSize: 14, display: "inline-block", textDecoration: "none" }}
-            >
-              Contact Us Today
-            </Link>
-          </div>
-        </div>
+    <div style={{ marginBottom: 8 }}>
+      <label style={{ display: "block", fontSize: 14, fontWeight: 700, color: "#333", marginBottom: 10 }}>
+        Buyer Type
+      </label>
+      <div style={{ display: "flex", border: "2px solid #006AC1" }}>
+        {BUYER_BUTTONS.map(({ key, label }, i) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => onChange(key)}
+            style={tabBtn(value === key, {
+              borderLeft: i > 0 ? "2px solid #006AC1" : "none",
+              fontSize: 12,
+              padding: "10px 6px",
+              flex: 1,
+            })}
+          >
+            {label}
+          </button>
+        ))}
       </div>
     </div>
   );
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   MORTGAGE CALCULATOR
+   SHARED STATE TYPE  — passed as props into each tab
 ───────────────────────────────────────────────────────────────── */
 
-function MortgageCalc() {
-  const [price, setPrice]                 = useState("");
-  const [depositAmount, setDepositAmount] = useState("");
-  const [depositPercent, setDepositPercent] = useState("");
-  const [depositMode, setDepositMode]     = useState<DepositMode>("amount");
-  const [rate, setRate]                   = useState("4.5");
-  const [term, setTerm]                   = useState("25");
-  const [type, setType]                   = useState<MortgageType>("repayment");
-  const [stressRate, setStressRate]       = useState("");
+interface SharedState {
+  price: string;               setPrice: (v: string) => void;
+  depositAmount: string;       setDepositAmount: (v: string) => void;
+  depositPercent: string;      setDepositPercent: (v: string) => void;
+  depositMode: DepositMode;    setDepositMode: (v: DepositMode) => void;
+  rate: string;                setRate: (v: string) => void;
+  term: string;                setTerm: (v: string) => void;
+  mortgageType: MortgageType;  setMortgageType: (v: MortgageType) => void;
+  stressRate: string;          setStressRate: (v: string) => void;
+  buyerType: BuyerType;        setBuyerType: (v: BuyerType) => void;
+}
 
-  const priceNum         = parseFloat(price.replace(/,/g, ""))         || 0;
-  const depositAmountNum = parseFloat(depositAmount.replace(/,/g, "")) || 0;
-  const depositPercentNum = parseFloat(depositPercent)                  || 0;
-  const rateNum           = parseFloat(rate)                            || 0;
-  const termNum           = parseInt(term)                              || 0;
-  const stressRateNum     = parseFloat(stressRate)                      || 0;
+/* ─────────────────────────────────────────────────────────────────
+   MORTGAGE CALCULATOR TAB
+───────────────────────────────────────────────────────────────── */
+
+interface MortgageCalcProps extends SharedState {
+  onViewSDLT: () => void;
+}
+
+function MortgageCalc(props: MortgageCalcProps) {
+  const {
+    price, setPrice,
+    depositAmount, setDepositAmount,
+    depositPercent, setDepositPercent,
+    depositMode, setDepositMode,
+    rate, setRate,
+    term, setTerm,
+    mortgageType, setMortgageType,
+    stressRate, setStressRate,
+    buyerType, setBuyerType,
+    onViewSDLT,
+  } = props;
+
+  const priceNum          = parseFloat(price.replace(/,/g, ""))          || 0;
+  const depositAmountNum  = parseFloat(depositAmount.replace(/,/g, ""))  || 0;
+  const depositPercentNum = parseFloat(depositPercent)                    || 0;
+  const rateNum           = parseFloat(rate)                              || 0;
+  const termNum           = parseInt(term)                                || 0;
+  const stressRateNum     = parseFloat(stressRate)                        || 0;
 
   const effectiveDeposit = depositMode === "amount"
     ? depositAmountNum
@@ -349,17 +227,17 @@ function MortgageCalc() {
   const mortgageAmount = Math.max(0, priceNum - effectiveDeposit);
   const months         = termNum * 12;
 
-  const monthly = type === "repayment"
+  const monthly = mortgageType === "repayment"
     ? calcRepayment(mortgageAmount, rateNum, termNum)
     : calcInterestOnly(mortgageAmount, rateNum);
 
-  const totalRepaid   = type === "repayment" ? monthly * months : 0;
-  const totalInterest = type === "repayment"
+  const totalRepaid   = mortgageType === "repayment" ? monthly * months : 0;
+  const totalInterest = mortgageType === "repayment"
     ? totalRepaid - mortgageAmount
     : calcInterestOnly(mortgageAmount, rateNum) * months;
 
   const stressedMonthly = stressRateNum > 0
-    ? (type === "repayment"
+    ? (mortgageType === "repayment"
         ? calcRepayment(mortgageAmount, stressRateNum, termNum)
         : calcInterestOnly(mortgageAmount, stressRateNum))
     : 0;
@@ -370,7 +248,7 @@ function MortgageCalc() {
       const p = parseFloat(val.replace(/,/g, "")) || 0;
       setDepositAmount(((p * depositPercentNum) / 100).toFixed(0));
     }
-  }, [depositMode, depositPercentNum]);
+  }, [setPrice, depositMode, depositPercentNum, setDepositAmount]);
 
   const handleDepositAmountChange = useCallback((val: string) => {
     setDepositAmount(val);
@@ -378,7 +256,7 @@ function MortgageCalc() {
       const d = parseFloat(val.replace(/,/g, "")) || 0;
       setDepositPercent(((d / priceNum) * 100).toFixed(1));
     }
-  }, [priceNum]);
+  }, [setDepositAmount, priceNum, setDepositPercent]);
 
   const handleDepositPercentChange = useCallback((val: string) => {
     setDepositPercent(val);
@@ -386,9 +264,13 @@ function MortgageCalc() {
       const pct = parseFloat(val) || 0;
       setDepositAmount(((priceNum * pct) / 100).toFixed(0));
     }
-  }, [priceNum]);
+  }, [setDepositPercent, priceNum, setDepositAmount]);
 
   const hasResults = mortgageAmount > 0 && rateNum > 0 && termNum > 0;
+
+  // SDLT estimate shown inside results panel
+  const { total: sdltTotal, ftbExceeds } = calcSDLT(priceNum, buyerType);
+  const sdltLabel = ftbExceeds ? "Main Residence (FTB >£500k)" : BUYER_LABEL[buyerType];
 
   return (
     <div>
@@ -401,16 +283,26 @@ function MortgageCalc() {
 
         {/* ── Inputs ── */}
         <div style={{ flex: "1 1 360px" }}>
+
+          {/* Mortgage type */}
           <div style={{ marginBottom: 24 }}>
             <label style={{ display: "block", fontSize: 14, fontWeight: 700, color: "#333", marginBottom: 8 }}>
               Mortgage Type
             </label>
             <div style={{ display: "flex", border: "2px solid #006AC1" }}>
-              <button type="button" onClick={() => setType("repayment")}
-                style={tabBtn(type === "repayment")}>Repayment</button>
-              <button type="button" onClick={() => setType("interest-only")}
-                style={tabBtn(type === "interest-only", { borderLeft: "2px solid #006AC1" })}>Interest Only</button>
+              <button type="button" onClick={() => setMortgageType("repayment")}
+                style={tabBtn(mortgageType === "repayment")}>Repayment</button>
+              <button type="button" onClick={() => setMortgageType("interest-only")}
+                style={tabBtn(mortgageType === "interest-only", { borderLeft: "2px solid #006AC1" })}>Interest Only</button>
             </div>
+          </div>
+
+          {/* Buyer type */}
+          <div style={{ marginBottom: 16 }}>
+            <BuyerTypeSelector value={buyerType} onChange={setBuyerType} />
+            <p style={{ fontSize: 12, color: "#888", marginTop: 6 }}>
+              Used to calculate your estimated stamp duty shown in results.
+            </p>
           </div>
 
           <div className="he-form-field">
@@ -423,17 +315,17 @@ function MortgageCalc() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
               <label style={{ marginBottom: 0 }}>Deposit</label>
               <div style={{ display: "flex", border: "1px solid #006AC1" }}>
-                <button type="button" onClick={() => setDepositMode("amount")} style={{
-                  padding: "2px 10px", background: depositMode === "amount" ? "#006AC1" : "#fff",
-                  color: depositMode === "amount" ? "#fff" : "#006AC1", border: "none",
-                  fontFamily: "'Open Sans', Arial, sans-serif", cursor: "pointer", fontWeight: 600, fontSize: 12,
-                }}>£</button>
-                <button type="button" onClick={() => setDepositMode("percent")} style={{
-                  padding: "2px 10px", background: depositMode === "percent" ? "#006AC1" : "#fff",
-                  color: depositMode === "percent" ? "#fff" : "#006AC1", border: "none",
-                  borderLeft: "1px solid #006AC1",
-                  fontFamily: "'Open Sans', Arial, sans-serif", cursor: "pointer", fontWeight: 600, fontSize: 12,
-                }}>%</button>
+                {(["amount", "percent"] as DepositMode[]).map((mode, i) => (
+                  <button key={mode} type="button" onClick={() => setDepositMode(mode)} style={{
+                    padding: "2px 10px",
+                    background: depositMode === mode ? "#006AC1" : "#fff",
+                    color: depositMode === mode ? "#fff" : "#006AC1",
+                    border: "none",
+                    borderLeft: i > 0 ? "1px solid #006AC1" : "none",
+                    fontFamily: "'Open Sans', Arial, sans-serif",
+                    cursor: "pointer", fontWeight: 600, fontSize: 12,
+                  }}>{mode === "amount" ? "£" : "%"}</button>
+                ))}
               </div>
             </div>
             <div style={{ display: "flex", gap: 8 }}>
@@ -481,7 +373,7 @@ function MortgageCalc() {
                 <span className="he-result-value">£{fmt(monthly)}</span>
               </div>
 
-              {type === "repayment" && (<>
+              {mortgageType === "repayment" && (<>
                 <div className="he-result-item">
                   <span className="he-result-label">Total Amount Repaid</span>
                   <span className="he-result-value">£{fmt(totalRepaid)}</span>
@@ -492,7 +384,7 @@ function MortgageCalc() {
                 </div>
               </>)}
 
-              {type === "interest-only" && (
+              {mortgageType === "interest-only" && (
                 <div className="he-result-item">
                   <span className="he-result-label">Total Interest (full term)</span>
                   <span className="he-result-value">£{fmt(totalInterest)}</span>
@@ -512,13 +404,57 @@ function MortgageCalc() {
                 <span style={{ color: "#555", fontWeight: 600 }}>{rateNum}%</span>
               </div>
 
+              {/* ── SDLT note ── */}
+              {priceNum > 0 && (
+                <div style={{
+                  marginTop: 20,
+                  background: "#f0f6ff",
+                  border: "1px solid #cde0f5",
+                  borderLeft: "4px solid #006AC1",
+                  padding: "14px 16px",
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
+                    <div>
+                      <p style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, margin: "0 0 2px" }}>
+                        Estimated Stamp Duty (SDLT)
+                      </p>
+                      <p style={{ fontSize: 12, color: "#888", margin: "0 0 6px" }}>
+                        Based on {sdltLabel} · £{fmtInt(priceNum)}
+                      </p>
+                      <span style={{ fontSize: 20, fontWeight: 700, color: sdltTotal === 0 ? "#16a34a" : "#006AC1" }}>
+                        £{fmtInt(sdltTotal)}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={onViewSDLT}
+                      style={{
+                        background: "#006AC1",
+                        color: "#fff",
+                        border: "none",
+                        padding: "8px 14px",
+                        fontFamily: "'Open Sans', Arial, sans-serif",
+                        fontSize: 12,
+                        fontWeight: 700,
+                        cursor: "pointer",
+                        whiteSpace: "nowrap",
+                        flexShrink: 0,
+                      }}
+                    >
+                      Full breakdown →
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Stress test */}
               {stressedMonthly > 0 && (
                 <div style={{ marginTop: 20, padding: 16, background: "#fff5f5", border: "2px solid #dc2626" }}>
                   <p style={{ fontSize: 12, fontWeight: 700, color: "#dc2626", margin: "0 0 8px" }}>
                     ⚠ Stress Test at {stressRateNum}%
                   </p>
                   <div className="he-result-item" style={{ borderBottom: "none", padding: 0 }}>
-                    <span className="he-result-label" style={{ color: "#dc2626" }}>Stressed Monthly Repayment</span>
+                    <span className="he-result-label" style={{ color: "#dc2626" }}>Stressed Monthly</span>
                     <span className="he-result-value he-result-stressed">£{fmt(stressedMonthly)}</span>
                   </div>
                   <p style={{ fontSize: 12, color: "#dc2626", marginTop: 8, marginBottom: 0 }}>
@@ -558,13 +494,164 @@ function MortgageCalc() {
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   PAGE — tabs wrapper
+   STAMP DUTY TAB
 ───────────────────────────────────────────────────────────────── */
 
-type CalcTab = "mortgage" | "stamp-duty";
+interface StampDutyProps {
+  price: string;      setPrice: (v: string) => void;
+  buyerType: BuyerType; setBuyerType: (v: BuyerType) => void;
+}
+
+function StampDutyCalculator({ price, setPrice, buyerType, setBuyerType }: StampDutyProps) {
+  const priceNum = parseFloat(price.replace(/,/g, "")) || 0;
+  const { bands, total, ftbExceeds } = calcSDLT(priceNum, buyerType);
+  const hasResult = priceNum > 0;
+  const info = BUYER_INFO[buyerType];
+
+  return (
+    <div>
+      <p style={{ fontSize: 15, color: "#555", marginBottom: 28, lineHeight: 1.7 }}>
+        Instantly calculate Stamp Duty Land Tax (SDLT) for main residences, first-time buyers and
+        investors. Rates based on current GOV.UK guidance for England &amp; Northern Ireland.
+      </p>
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 32 }}>
+
+        {/* ── Inputs ── */}
+        <div style={{ flex: "1 1 300px" }}>
+          <div style={{ background: "#fff", border: "1px solid #dde8f5", padding: 28 }}>
+            <h2 style={{ fontSize: 18, fontWeight: 700, color: "#333", marginBottom: 24 }}>Property Details</h2>
+
+            <div className="he-form-field">
+              <label>Property Price (£)</label>
+              <input
+                type="number"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="e.g. 250000"
+                min="0"
+              />
+              <p style={{ fontSize: 12, color: "#888", marginTop: 4 }}>
+                Shared with the Mortgage Calculator tab.
+              </p>
+            </div>
+
+            <BuyerTypeSelector value={buyerType} onChange={setBuyerType} />
+          </div>
+        </div>
+
+        {/* ── Results ── */}
+        <div style={{ flex: "1 1 320px" }}>
+          <div style={{ background: "#fff", border: "1px solid #dde8f5", padding: 28, minHeight: 260 }}>
+            <h2 style={{ fontSize: 18, fontWeight: 700, color: "#333", marginBottom: 4 }}>SDLT Calculation</h2>
+            <p style={{ fontSize: 13, color: "#888", marginBottom: 20 }}>
+              Rates based on current GOV.UK guidance (England &amp; Northern Ireland).
+            </p>
+
+            {hasResult ? (
+              <>
+                <p style={{ fontSize: 12, fontWeight: 700, color: "#555", letterSpacing: 0.6, textTransform: "uppercase", marginBottom: 14 }}>
+                  {ftbExceeds ? "SDLT — MAIN RESIDENCE (FTB relief not applicable above £500,000)" : info.heading}
+                </p>
+
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14, marginBottom: 12 }}>
+                  <thead>
+                    <tr style={{ borderBottom: "2px solid #dde8f5" }}>
+                      <th style={{ textAlign: "left",  padding: "6px 0", color: "#555", fontWeight: 700 }}>Band</th>
+                      <th style={{ textAlign: "right", padding: "6px 0", color: "#555", fontWeight: 700 }}>Rate</th>
+                      <th style={{ textAlign: "right", padding: "6px 0", color: "#555", fontWeight: 700 }}>Tax</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bands.map((b, i) => (
+                      <tr key={i} style={{ borderBottom: "1px solid #f0f4fa" }}>
+                        <td style={{ padding: "8px 0", color: "#444" }}>{fmtBoundary(b.from)} – {fmtBoundary(b.to)}</td>
+                        <td style={{ padding: "8px 0", textAlign: "right", color: "#444" }}>{b.rate}%</td>
+                        <td style={{ padding: "8px 0", textAlign: "right", color: "#444" }}>£{fmtInt(b.tax)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "2px solid #006AC1", paddingTop: 12, marginBottom: 20 }}>
+                  <span style={{ fontWeight: 700, fontSize: 15, color: "#333" }}>Total SDLT</span>
+                  <span style={{ fontWeight: 700, fontSize: 22, color: total === 0 ? "#16a34a" : "#006AC1" }}>
+                    £{fmtInt(total)}
+                  </span>
+                </div>
+
+                <div style={{ borderLeft: "4px solid #006AC1", paddingLeft: 12 }}>
+                  <p style={{ fontSize: 13, color: "#555", margin: "0 0 8px", lineHeight: 1.65 }}>
+                    {ftbExceeds
+                      ? "This property exceeds £500,000, so first-time buyer relief does not apply. Standard main residence rates are used instead."
+                      : info.text}
+                  </p>
+                  <a href="https://www.gov.uk/stamp-duty-land-tax" target="_blank" rel="noopener noreferrer"
+                    style={{ fontSize: 13, color: "#006AC1", fontWeight: 700, textDecoration: "none" }}>
+                    Verify on GOV.UK →
+                  </a>
+                </div>
+              </>
+            ) : (
+              <div style={{ textAlign: "center", padding: "40px 0" }}>
+                <div style={{ fontSize: 44, marginBottom: 12, color: "#dde8f5" }}>🏷️</div>
+                <p style={{ color: "#888", fontSize: 14, lineHeight: 1.7 }}>
+                  Enter a property price to see your SDLT breakdown.
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div style={{ marginTop: 16, padding: "14px 16px", background: "#fff8e1", borderLeft: "4px solid #f59e0b", fontSize: 13, color: "#666", lineHeight: 1.6 }}>
+            <p style={{ margin: "0 0 4px", fontWeight: 700, color: "#555" }}>Important</p>
+            <p style={{ margin: 0 }}>
+              This calculator covers England &amp; Northern Ireland SDLT only. Scotland uses Land and
+              Buildings Transaction Tax (LBTT) and Wales uses Land Transaction Tax (LTT). Always verify
+              figures with your solicitor before exchanging contracts.
+            </p>
+          </div>
+
+          <div style={{ marginTop: 16, background: "#006AC1", padding: "20px 24px", textAlign: "center" }}>
+            <p style={{ color: "#fff", fontSize: 15, fontWeight: 600, marginBottom: 12 }}>Want personalised advice?</p>
+            <Link href="/contact/" style={{ background: "#fff", color: "#006AC1", padding: "10px 24px", fontWeight: 700, fontSize: 14, display: "inline-block", textDecoration: "none" }}>
+              Contact Us Today
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   PAGE  — all shared state lives here
+───────────────────────────────────────────────────────────────── */
 
 export default function MortgageCalculatorPage() {
   const [activeTab, setActiveTab] = useState<CalcTab>("mortgage");
+
+  // ── Shared state ──
+  const [price,          setPrice]          = useState("");
+  const [depositAmount,  setDepositAmount]  = useState("");
+  const [depositPercent, setDepositPercent] = useState("");
+  const [depositMode,    setDepositMode]    = useState<DepositMode>("amount");
+  const [rate,           setRate]           = useState("4.5");
+  const [term,           setTerm]           = useState("25");
+  const [mortgageType,   setMortgageType]   = useState<MortgageType>("repayment");
+  const [stressRate,     setStressRate]     = useState("");
+  const [buyerType,      setBuyerType]      = useState<BuyerType>("main-residence");
+
+  const sharedState: SharedState = {
+    price, setPrice,
+    depositAmount, setDepositAmount,
+    depositPercent, setDepositPercent,
+    depositMode, setDepositMode,
+    rate, setRate,
+    term, setTerm,
+    mortgageType, setMortgageType,
+    stressRate, setStressRate,
+    buyerType, setBuyerType,
+  };
 
   return (
     <>
@@ -590,7 +677,19 @@ export default function MortgageCalculatorPage() {
           </button>
         </div>
 
-        {activeTab === "mortgage" ? <MortgageCalc /> : <StampDutyCalculator />}
+        {activeTab === "mortgage" ? (
+          <MortgageCalc
+            {...sharedState}
+            onViewSDLT={() => setActiveTab("stamp-duty")}
+          />
+        ) : (
+          <StampDutyCalculator
+            price={price}
+            setPrice={setPrice}
+            buyerType={buyerType}
+            setBuyerType={setBuyerType}
+          />
+        )}
       </PageWrapper>
     </>
   );
