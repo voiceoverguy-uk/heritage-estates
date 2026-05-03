@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { Link } from "wouter";
 import SeoHead from "@/components/SeoHead";
 import PageWrapper from "@/components/PageWrapper";
+import { jsPDF } from "jspdf";
 
 /* ─────────────────────────────────────────────────────────────────
    TYPES
@@ -39,6 +40,236 @@ function fmtInt(n: number): string {
 
 function todayStr(): string {
   return new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   PDF GENERATION
+───────────────────────────────────────────────────────────────── */
+
+function buildPDFHeader(doc: jsPDF, title: string, propertyRef: string) {
+  const W = 210, L = 15, R = 195;
+  doc.setFillColor(0, 106, 193);
+  doc.rect(0, 0, W, 32, "F");
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(17);
+  doc.setTextColor(255, 255, 255);
+  doc.text("HERITAGE ESTATES", L, 13);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9.5);
+  doc.text("Mortgage & Insurance Services", L, 20);
+  doc.setFontSize(8.5);
+  doc.text("2 Brooksby Drive, Oadby, Leicester LE2 5AA  ·  0116 253 7733  ·  heritageestates.co.uk", L, 27);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.text(title, R, 13, { align: "right" });
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.text(todayStr(), R, 20, { align: "right" });
+  if (propertyRef) doc.text(propertyRef, R, 27, { align: "right" });
+}
+
+function addPDFRow(doc: jsPDF, label: string, value: string, y: number): number {
+  const L = 15, R = 195;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.setTextColor(85, 85, 85);
+  doc.text(label, L, y);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(51, 51, 51);
+  doc.text(value, R, y, { align: "right" });
+  const ny = y + 5;
+  doc.setDrawColor(220, 230, 245);
+  doc.setLineWidth(0.2);
+  doc.line(L, ny, R, ny);
+  return ny + 5;
+}
+
+interface MortgagePDFData {
+  propertyRef: string; priceNum: number; effectiveDeposit: number;
+  depositPercentNum: number; mortgageAmount: number; monthly: number;
+  totalRepaid: number; totalInterest: number; mortgageType: string;
+  buyerType: BuyerType; rateNum: number; termNum: number;
+  sdltTotal: number; sdltLabel: string;
+  stressRateNum: number; stressedMonthly: number;
+}
+
+function downloadMortgagePDF(data: MortgagePDFData) {
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const L = 15, R = 195, CW = 180;
+  buildPDFHeader(doc, "MORTGAGE CALCULATION", data.propertyRef);
+
+  let y = 44;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
+  doc.setTextColor(51, 51, 51);
+  doc.text("Your Results", L, y);
+  y += 3;
+
+  // Hero: Monthly Repayment
+  doc.setDrawColor(0, 106, 193);
+  doc.setLineWidth(0.6);
+  doc.line(L, y, R, y);
+  y += 7;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
+  doc.setTextColor(51, 51, 51);
+  doc.text("Monthly Repayment", L, y);
+  doc.setFontSize(15);
+  doc.setTextColor(0, 106, 193);
+  doc.text(`£${fmt(data.monthly)}`, R, y, { align: "right" });
+  y += 4;
+  doc.setLineWidth(0.6);
+  doc.line(L, y, R, y);
+  y += 7;
+
+  y = addPDFRow(doc, "Property Price", `£${fmt(data.priceNum)}`, y);
+  y = addPDFRow(doc, `Estimated SDLT (${data.sdltLabel})`, `£${fmtInt(data.sdltTotal)}`, y);
+  const depStr = data.depositPercentNum > 0
+    ? `£${fmt(data.effectiveDeposit)} (${data.depositPercentNum.toFixed(1)}%)`
+    : `£${fmt(data.effectiveDeposit)}`;
+  y = addPDFRow(doc, "Deposit", depStr, y);
+  y = addPDFRow(doc, "Mortgage Amount", `£${fmt(data.mortgageAmount)}`, y);
+  if (data.mortgageType === "repayment") {
+    y = addPDFRow(doc, "Total Amount Repaid", `£${fmt(data.totalRepaid)}`, y);
+    y = addPDFRow(doc, "Total Interest Paid", `£${fmt(data.totalInterest)}`, y);
+  } else {
+    y = addPDFRow(doc, "Total Interest (full term)", `£${fmt(data.totalInterest)}`, y);
+  }
+  y = addPDFRow(doc, "Mortgage Type", data.mortgageType === "repayment" ? "Repayment" : "Interest Only", y);
+  y = addPDFRow(doc, "Buyer Type", BUYER_LABEL[data.buyerType], y);
+  y = addPDFRow(doc, "Term", `${data.termNum} years (${data.termNum * 12} payments)`, y);
+  y = addPDFRow(doc, "Interest Rate", `${data.rateNum}%`, y);
+
+  if (data.stressRateNum > 0 && data.stressedMonthly > 0) {
+    y += 4;
+    doc.setFillColor(255, 245, 245);
+    doc.setDrawColor(220, 38, 38);
+    doc.setLineWidth(0.4);
+    doc.rect(L, y - 4, CW, 24, "FD");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    doc.setTextColor(220, 38, 38);
+    doc.text(`Stress Test at ${data.stressRateNum}%`, L + 3, y + 2);
+    y += 8;
+    doc.setFont("helvetica", "normal");
+    doc.text("Stressed Monthly Repayment", L + 3, y);
+    doc.setFont("helvetica", "bold");
+    doc.text(`£${fmt(data.stressedMonthly)}`, R - 3, y, { align: "right" });
+    y += 6;
+    doc.setFont("helvetica", "normal");
+    doc.text(`Monthly increase: £${fmt(data.stressedMonthly - data.monthly)}`, L + 3, y);
+    y += 10;
+  }
+
+  y = Math.max(y + 10, 248);
+  doc.setDrawColor(200, 200, 200);
+  doc.setLineWidth(0.3);
+  doc.line(L, y, R, y);
+  y += 5;
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(7.5);
+  doc.setTextColor(130, 130, 130);
+  const mDisc = "This document is for illustrative purposes only and does not constitute financial advice. Your home may be repossessed if you do not keep up repayments on your mortgage. Heritage Estates is an appointed representative. Always consult a qualified mortgage adviser before making any decisions.";
+  doc.text(doc.splitTextToSize(mDisc, CW), L, y);
+
+  const mSlug = data.propertyRef ? `-${data.propertyRef.replace(/[^a-zA-Z0-9]/g, "-").slice(0, 25)}` : "";
+  doc.save(`mortgage-calculation${mSlug}.pdf`);
+}
+
+interface SDLTPDFData {
+  propertyRef: string; priceNum: number; buyerType: BuyerType;
+  bands: SDLTBandResult[]; total: number; ftbExceeds: boolean; infoText: string;
+}
+
+function downloadSDLTPDF(data: SDLTPDFData) {
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const L = 15, R = 195, CW = 180;
+  buildPDFHeader(doc, "STAMP DUTY (SDLT) CALCULATION", data.propertyRef);
+
+  let y = 44;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
+  doc.setTextColor(51, 51, 51);
+  doc.text("SDLT Breakdown", L, y);
+  y += 5;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.setTextColor(85, 85, 85);
+  const heading = data.ftbExceeds
+    ? "SDLT — Main Residence rates applied (FTB relief not applicable above £500,000)"
+    : `${BUYER_LABEL[data.buyerType]} — Property Price: £${fmtInt(data.priceNum)}`;
+  const headingLines = doc.splitTextToSize(heading, CW);
+  doc.text(headingLines, L, y);
+  y += headingLines.length * 5 + 5;
+
+  // Table header
+  doc.setDrawColor(0, 106, 193);
+  doc.setLineWidth(0.5);
+  doc.line(L, y, R, y);
+  y += 6;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.setTextColor(51, 51, 51);
+  doc.text("Band", L, y);
+  doc.text("Rate", 145, y, { align: "right" });
+  doc.text("Tax", R, y, { align: "right" });
+  y += 3;
+  doc.setLineWidth(0.4);
+  doc.line(L, y, R, y);
+  y += 6;
+
+  doc.setLineWidth(0.2);
+  for (const b of data.bands) {
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(68, 68, 68);
+    doc.text(`${fmtBoundary(b.from)} – ${fmtBoundary(b.to)}`, L, y);
+    doc.text(`${b.rate}%`, 145, y, { align: "right" });
+    doc.setFont("helvetica", "bold");
+    doc.text(`£${fmtInt(b.tax)}`, R, y, { align: "right" });
+    y += 5;
+    doc.setDrawColor(220, 230, 245);
+    doc.line(L, y, R, y);
+    y += 4;
+  }
+
+  y += 2;
+  doc.setDrawColor(0, 106, 193);
+  doc.setLineWidth(0.5);
+  doc.line(L, y, R, y);
+  y += 7;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(13);
+  doc.setTextColor(51, 51, 51);
+  doc.text("Total SDLT", L, y);
+  const [tr, tg, tb] = data.total === 0 ? [22, 163, 74] : [0, 106, 193];
+  doc.setTextColor(tr, tg, tb);
+  doc.text(`£${fmtInt(data.total)}`, R, y, { align: "right" });
+  y += 12;
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9.5);
+  doc.setTextColor(85, 85, 85);
+  const infoLines = doc.splitTextToSize(data.infoText, CW);
+  doc.text(infoLines, L, y);
+  y += infoLines.length * 5 + 5;
+  doc.setFontSize(9);
+  doc.setTextColor(130, 130, 130);
+  doc.text("Source: gov.uk/stamp-duty-land-tax (England & Northern Ireland, post 1 April 2025)", L, y);
+
+  y = Math.max(y + 16, 248);
+  doc.setDrawColor(200, 200, 200);
+  doc.setLineWidth(0.3);
+  doc.line(L, y, R, y);
+  y += 5;
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(7.5);
+  doc.setTextColor(130, 130, 130);
+  const sDisc = "This document is for illustrative purposes only. SDLT rates apply to England and Northern Ireland only. Scotland uses LBTT and Wales uses LTT. Always verify figures with your solicitor before exchanging contracts.";
+  doc.text(doc.splitTextToSize(sDisc, CW), L, y);
+
+  const sSlug = data.propertyRef ? `-${data.propertyRef.replace(/[^a-zA-Z0-9]/g, "-").slice(0, 25)}` : "";
+  doc.save(`sdlt-calculation${sSlug}.pdf`);
 }
 
 /* ─────────────────────────────────────────────────────────────────
@@ -423,7 +654,12 @@ function MortgageCalc(props: MortgageCalcProps) {
                 <button
                   type="button"
                   className="he-no-print"
-                  onClick={() => window.print()}
+                  onClick={() => downloadMortgagePDF({
+                    propertyRef, priceNum, effectiveDeposit, depositPercentNum,
+                    mortgageAmount, monthly, totalRepaid, totalInterest,
+                    mortgageType, buyerType, rateNum, termNum,
+                    sdltTotal, sdltLabel, stressRateNum, stressedMonthly,
+                  })}
                   style={{
                     background: "#fff",
                     color: "#006AC1",
@@ -652,13 +888,23 @@ function StampDutyCalculator({ propertyRef, price, setPrice, buyerType, setBuyer
           <PrintHeader propertyRef={propertyRef} title="Stamp Duty (SDLT) Calculation" />
 
           <div style={{ background: "#fff", border: "1px solid #dde8f5", padding: 28, minHeight: 260 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-              <h2 style={{ fontSize: 18, fontWeight: 700, color: "#333", margin: 0 }}>SDLT Calculation</h2>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 }}>
+              <div>
+                <h2 style={{ fontSize: 18, fontWeight: 700, color: "#333", margin: 0 }}>SDLT Calculation</h2>
+                {propertyRef && (
+                  <p style={{ fontSize: 12, color: "#888", margin: "4px 0 0", fontStyle: "italic" }}>
+                    {propertyRef}
+                  </p>
+                )}
+              </div>
               {hasResult && (
                 <button
                   type="button"
                   className="he-no-print"
-                  onClick={() => window.print()}
+                  onClick={() => downloadSDLTPDF({
+                    propertyRef, priceNum, buyerType,
+                    bands, total, ftbExceeds, infoText: info.text,
+                  })}
                   style={{
                     background: "#fff",
                     color: "#006AC1",
