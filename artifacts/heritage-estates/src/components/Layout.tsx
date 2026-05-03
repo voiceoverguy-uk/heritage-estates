@@ -166,9 +166,9 @@ export default function Layout({ children }: LayoutProps) {
           <div className="he-footer-cols" style={{ display: "flex", flexWrap: "wrap", gap: 40, marginBottom: 20 }}>
             <div style={{ flex: "1 1 280px" }}>
               <img
-                src="https://heritageestates.co.uk/wp-content/uploads/logo-heritage-estates.png"
+                src="/logo-heritage-estates.png"
                 alt="Heritage Estates"
-                style={{ height: 50, marginBottom: 12, filter: "brightness(0) invert(1)" }}
+                style={{ height: 60, marginBottom: 12 }}
               />
               <p style={{ fontSize: 13, color: "#aaa", lineHeight: 1.6 }}>
                 Heritage Estates (Leicester) Ltd. is an appointed representative of Quilter Mortgage Planning Limited.
