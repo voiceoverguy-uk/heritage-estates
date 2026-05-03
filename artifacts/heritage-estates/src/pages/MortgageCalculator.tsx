@@ -443,11 +443,72 @@ function MortgageCalc(props: MortgageCalcProps) {
                 </button>
               </div>
 
-              <div className="he-result-item">
-                <span className="he-result-label">Monthly Repayment</span>
-                <span className="he-result-value">£{fmt(monthly)}</span>
+              {/* ── 1. Monthly Repayment — hero number ── */}
+              <div style={{
+                display: "flex", justifyContent: "space-between", alignItems: "center",
+                padding: "14px 0 16px",
+                borderBottom: "2px solid #006AC1",
+                marginBottom: 4,
+              }}>
+                <span style={{ fontSize: 15, fontWeight: 700, color: "#333" }}>Monthly Repayment</span>
+                <span style={{ fontSize: 28, fontWeight: 800, color: "#006AC1", letterSpacing: -0.5 }}>
+                  £{fmt(monthly)}
+                </span>
               </div>
 
+              {/* ── 2. Property Price ── */}
+              <div className="he-result-item">
+                <span className="he-result-label">Property Price</span>
+                <span style={{ color: "#555", fontWeight: 600 }}>£{fmt(priceNum)}</span>
+              </div>
+
+              {/* ── 3. SDLT estimate (inline row + breakdown button) ── */}
+              <div className="he-result-item" style={{ alignItems: "flex-start", gap: 8 }}>
+                <span className="he-result-label" style={{ paddingTop: 2 }}>
+                  Estimated SDLT
+                  <span style={{ display: "block", fontSize: 11, color: "#aaa", fontWeight: 400, marginTop: 1 }}>
+                    {sdltLabel}
+                  </span>
+                </span>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+                  <span style={{ fontWeight: 700, fontSize: 16, color: sdltTotal === 0 ? "#16a34a" : "#555" }}>
+                    £{fmtInt(sdltTotal)}
+                  </span>
+                  <button
+                    type="button"
+                    className="he-no-print"
+                    onClick={onViewSDLT}
+                    style={{
+                      background: "transparent", color: "#006AC1", border: "1px solid #006AC1",
+                      padding: "3px 9px", fontFamily: "'Open Sans', Arial, sans-serif",
+                      fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
+                    }}
+                  >
+                    breakdown →
+                  </button>
+                </div>
+              </div>
+
+              {/* ── 4. Deposit ── */}
+              <div className="he-result-item">
+                <span className="he-result-label">Deposit</span>
+                <span style={{ color: "#555", fontWeight: 600 }}>
+                  £{fmt(effectiveDeposit)}
+                  {depositPercentNum > 0 && (
+                    <span style={{ fontSize: 12, color: "#aaa", fontWeight: 400, marginLeft: 6 }}>
+                      ({depositPercentNum.toFixed(1)}%)
+                    </span>
+                  )}
+                </span>
+              </div>
+
+              {/* ── 5. Mortgage Amount ── */}
+              <div className="he-result-item">
+                <span className="he-result-label">Mortgage Amount</span>
+                <span style={{ color: "#555", fontWeight: 600 }}>£{fmt(mortgageAmount)}</span>
+              </div>
+
+              {/* ── 6 & 7. Totals ── */}
               {mortgageType === "repayment" && (<>
                 <div className="he-result-item">
                   <span className="he-result-label">Total Amount Repaid</span>
@@ -466,10 +527,7 @@ function MortgageCalc(props: MortgageCalcProps) {
                 </div>
               )}
 
-              <div className="he-result-item">
-                <span className="he-result-label">Mortgage Amount</span>
-                <span style={{ color: "#555", fontWeight: 600 }}>£{fmt(mortgageAmount)}</span>
-              </div>
+              {/* ── 8–12. Detail rows ── */}
               <div className="he-result-item">
                 <span className="he-result-label">Mortgage Type</span>
                 <span style={{ color: "#555", fontWeight: 600 }}>{mortgageType === "repayment" ? "Repayment" : "Interest Only"}</span>
@@ -486,39 +544,6 @@ function MortgageCalc(props: MortgageCalcProps) {
                 <span className="he-result-label">Rate</span>
                 <span style={{ color: "#555", fontWeight: 600 }}>{rateNum}%</span>
               </div>
-
-              {/* SDLT estimate */}
-              {priceNum > 0 && (
-                <div style={{ marginTop: 20, background: "#f0f6ff", border: "1px solid #cde0f5", borderLeft: "4px solid #006AC1", padding: "14px 16px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
-                    <div>
-                      <p style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, margin: "0 0 2px" }}>
-                        Estimated Stamp Duty (SDLT)
-                      </p>
-                      <p style={{ fontSize: 12, color: "#888", margin: "0 0 6px" }}>
-                        Based on {sdltLabel} · £{fmtInt(priceNum)}
-                      </p>
-                      <span style={{ fontSize: 20, fontWeight: 700, color: sdltTotal === 0 ? "#16a34a" : "#006AC1" }}>
-                        £{fmtInt(sdltTotal)}
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      className="he-no-print"
-                      onClick={onViewSDLT}
-                      style={{
-                        background: "#006AC1", color: "#fff", border: "none",
-                        padding: "8px 14px",
-                        fontFamily: "'Open Sans', Arial, sans-serif",
-                        fontSize: 12, fontWeight: 700, cursor: "pointer",
-                        whiteSpace: "nowrap", flexShrink: 0,
-                      }}
-                    >
-                      Full breakdown →
-                    </button>
-                  </div>
-                </div>
-              )}
 
               {/* Stress test */}
               {stressedMonthly > 0 && (
