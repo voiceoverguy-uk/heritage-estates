@@ -37,6 +37,10 @@ function fmtInt(n: number): string {
   return n.toLocaleString("en-GB", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 }
 
+function todayStr(): string {
+  return new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+}
+
 /* ─────────────────────────────────────────────────────────────────
    SDLT LOGIC  — England & N. Ireland, post 1 April 2025
 ───────────────────────────────────────────────────────────────── */
@@ -69,8 +73,8 @@ function calcSDLT(price: number, buyerType: BuyerType) {
   if (price <= 0) return { bands: [] as SDLTBandResult[], total: 0, ftbExceeds: false };
   const ftbExceeds = buyerType === "first-time-buyer" && price > 500_000;
   const bands =
-    buyerType === "investor"                          ? INVESTOR_BANDS :
-    buyerType === "first-time-buyer" && !ftbExceeds  ? FTB_BANDS :
+    buyerType === "investor"                         ? INVESTOR_BANDS :
+    buyerType === "first-time-buyer" && !ftbExceeds ? FTB_BANDS :
     MAIN_RESIDENCE_BANDS;
   const result: SDLTBandResult[] = [];
   let total = 0;
@@ -134,7 +138,7 @@ function tabBtn(active: boolean, extra?: React.CSSProperties): React.CSSProperti
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   BUYER TYPE BUTTONS  — reused in both tabs
+   BUYER TYPE SELECTOR  — shared between both tabs
 ───────────────────────────────────────────────────────────────── */
 
 const BUYER_BUTTONS: { key: BuyerType; label: string }[] = [
@@ -143,12 +147,7 @@ const BUYER_BUTTONS: { key: BuyerType; label: string }[] = [
   { key: "investor",         label: "Second Home / Investor" },
 ];
 
-interface BuyerTypeSelectorProps {
-  value: BuyerType;
-  onChange: (v: BuyerType) => void;
-}
-
-function BuyerTypeSelector({ value, onChange }: BuyerTypeSelectorProps) {
+function BuyerTypeSelector({ value, onChange }: { value: BuyerType; onChange: (v: BuyerType) => void }) {
   return (
     <div style={{ marginBottom: 8 }}>
       <label style={{ display: "block", fontSize: 14, fontWeight: 700, color: "#333", marginBottom: 10 }}>
@@ -156,17 +155,8 @@ function BuyerTypeSelector({ value, onChange }: BuyerTypeSelectorProps) {
       </label>
       <div style={{ display: "flex", border: "2px solid #006AC1" }}>
         {BUYER_BUTTONS.map(({ key, label }, i) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => onChange(key)}
-            style={tabBtn(value === key, {
-              borderLeft: i > 0 ? "2px solid #006AC1" : "none",
-              fontSize: 12,
-              padding: "10px 6px",
-              flex: 1,
-            })}
-          >
+          <button key={key} type="button" onClick={() => onChange(key)}
+            style={tabBtn(value === key, { borderLeft: i > 0 ? "2px solid #006AC1" : "none", fontSize: 12, padding: "10px 6px", flex: 1 })}>
             {label}
           </button>
         ))}
@@ -176,19 +166,51 @@ function BuyerTypeSelector({ value, onChange }: BuyerTypeSelectorProps) {
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   SHARED STATE TYPE  — passed as props into each tab
+   SHARED STATE INTERFACE
 ───────────────────────────────────────────────────────────────── */
 
 interface SharedState {
-  price: string;               setPrice: (v: string) => void;
-  depositAmount: string;       setDepositAmount: (v: string) => void;
-  depositPercent: string;      setDepositPercent: (v: string) => void;
-  depositMode: DepositMode;    setDepositMode: (v: DepositMode) => void;
-  rate: string;                setRate: (v: string) => void;
-  term: string;                setTerm: (v: string) => void;
-  mortgageType: MortgageType;  setMortgageType: (v: MortgageType) => void;
-  stressRate: string;          setStressRate: (v: string) => void;
-  buyerType: BuyerType;        setBuyerType: (v: BuyerType) => void;
+  propertyRef: string;       setPropertyRef: (v: string) => void;
+  price: string;             setPrice: (v: string) => void;
+  depositAmount: string;     setDepositAmount: (v: string) => void;
+  depositPercent: string;    setDepositPercent: (v: string) => void;
+  depositMode: DepositMode;  setDepositMode: (v: DepositMode) => void;
+  rate: string;              setRate: (v: string) => void;
+  term: string;              setTerm: (v: string) => void;
+  mortgageType: MortgageType; setMortgageType: (v: MortgageType) => void;
+  stressRate: string;        setStressRate: (v: string) => void;
+  buyerType: BuyerType;      setBuyerType: (v: BuyerType) => void;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   PRINT HEADER  — hidden on screen, shown only when printing
+───────────────────────────────────────────────────────────────── */
+
+function PrintHeader({ propertyRef, title }: { propertyRef: string; title: string }) {
+  return (
+    <div className="he-print-header" style={{ marginBottom: 20, paddingBottom: 16, borderBottom: "2px solid #006AC1" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div>
+          <div style={{ fontSize: 22, fontWeight: 800, color: "#006AC1", letterSpacing: -0.5 }}>
+            HERITAGE ESTATES
+          </div>
+          <div style={{ fontSize: 12, color: "#555", marginTop: 2 }}>Mortgage &amp; Insurance Services</div>
+          <div style={{ fontSize: 11, color: "#888", marginTop: 6, lineHeight: 1.5 }}>
+            2 Brooksby Drive, Oadby, Leicester LE2 5AA<br />
+            Tel: 0116 253 7733 · heritageestates.co.uk
+          </div>
+        </div>
+        <div style={{ textAlign: "right", fontSize: 12, color: "#555" }}>
+          <div style={{ fontWeight: 700, fontSize: 14, color: "#333", marginBottom: 4 }}>{title}</div>
+          <div>Date: {todayStr()}</div>
+          {propertyRef && <div style={{ marginTop: 4 }}>Ref: <strong>{propertyRef}</strong></div>}
+        </div>
+      </div>
+      <div style={{ marginTop: 12, fontSize: 11, color: "#888" }}>
+        This document is for illustrative purposes only. Figures are estimates and do not constitute financial advice.
+      </div>
+    </div>
+  );
 }
 
 /* ─────────────────────────────────────────────────────────────────
@@ -201,6 +223,7 @@ interface MortgageCalcProps extends SharedState {
 
 function MortgageCalc(props: MortgageCalcProps) {
   const {
+    propertyRef, setPropertyRef,
     price, setPrice,
     depositAmount, setDepositAmount,
     depositPercent, setDepositPercent,
@@ -213,12 +236,12 @@ function MortgageCalc(props: MortgageCalcProps) {
     onViewSDLT,
   } = props;
 
-  const priceNum          = parseFloat(price.replace(/,/g, ""))          || 0;
-  const depositAmountNum  = parseFloat(depositAmount.replace(/,/g, ""))  || 0;
-  const depositPercentNum = parseFloat(depositPercent)                    || 0;
-  const rateNum           = parseFloat(rate)                              || 0;
-  const termNum           = parseInt(term)                                || 0;
-  const stressRateNum     = parseFloat(stressRate)                        || 0;
+  const priceNum          = parseFloat(price.replace(/,/g, ""))         || 0;
+  const depositAmountNum  = parseFloat(depositAmount.replace(/,/g, "")) || 0;
+  const depositPercentNum = parseFloat(depositPercent)                   || 0;
+  const rateNum           = parseFloat(rate)                             || 0;
+  const termNum           = parseInt(term)                               || 0;
+  const stressRateNum     = parseFloat(stressRate)                       || 0;
 
   const effectiveDeposit = depositMode === "amount"
     ? depositAmountNum
@@ -267,8 +290,6 @@ function MortgageCalc(props: MortgageCalcProps) {
   }, [setDepositPercent, priceNum, setDepositAmount]);
 
   const hasResults = mortgageAmount > 0 && rateNum > 0 && termNum > 0;
-
-  // SDLT estimate shown inside results panel
   const { total: sdltTotal, ftbExceeds } = calcSDLT(priceNum, buyerType);
   const sdltLabel = ftbExceeds ? "Main Residence (FTB >£500k)" : BUYER_LABEL[buyerType];
 
@@ -283,6 +304,24 @@ function MortgageCalc(props: MortgageCalcProps) {
 
         {/* ── Inputs ── */}
         <div style={{ flex: "1 1 360px" }}>
+
+          {/* Property reference */}
+          <div className="he-form-field">
+            <label>
+              Property Reference{" "}
+              <span style={{ fontWeight: 400, color: "#888", fontSize: 12 }}>— optional</span>
+            </label>
+            <input
+              type="text"
+              value={propertyRef}
+              onChange={(e) => setPropertyRef(e.target.value)}
+              placeholder="e.g. 12 Acacia Avenue, Leicester"
+              maxLength={100}
+            />
+            <p style={{ fontSize: 12, color: "#888", marginTop: 4 }}>
+              Appears in Your Results and on the saved PDF.
+            </p>
+          </div>
 
           {/* Mortgage type */}
           <div style={{ marginBottom: 24 }}>
@@ -362,11 +401,47 @@ function MortgageCalc(props: MortgageCalcProps) {
           </div>
         </div>
 
-        {/* ── Results ── */}
-        <div style={{ flex: "1 1 300px" }}>
+        {/* ── Results (print target) ── */}
+        <div style={{ flex: "1 1 300px" }} id="he-print-target">
+
+          {/* Print-only header — hidden on screen */}
+          <PrintHeader propertyRef={propertyRef} title="Mortgage Calculation" />
+
           {hasResults ? (
             <div className="he-results-panel">
-              <h2 style={{ color: "#006AC1", fontSize: 18, marginBottom: 20 }}>Your Results</h2>
+
+              {/* Results header row */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+                <div>
+                  <h2 style={{ color: "#006AC1", fontSize: 18, margin: 0 }}>Your Results</h2>
+                  {propertyRef && (
+                    <p style={{ fontSize: 12, color: "#888", margin: "4px 0 0", fontStyle: "italic" }}>
+                      {propertyRef}
+                    </p>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  className="he-no-print"
+                  onClick={() => window.print()}
+                  style={{
+                    background: "#fff",
+                    color: "#006AC1",
+                    border: "2px solid #006AC1",
+                    padding: "7px 14px",
+                    fontFamily: "'Open Sans', Arial, sans-serif",
+                    fontSize: 12,
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <span>⬇</span> Save as PDF
+                </button>
+              </div>
 
               <div className="he-result-item">
                 <span className="he-result-label">Monthly Repayment</span>
@@ -396,6 +471,14 @@ function MortgageCalc(props: MortgageCalcProps) {
                 <span style={{ color: "#555", fontWeight: 600 }}>£{fmt(mortgageAmount)}</span>
               </div>
               <div className="he-result-item">
+                <span className="he-result-label">Mortgage Type</span>
+                <span style={{ color: "#555", fontWeight: 600 }}>{mortgageType === "repayment" ? "Repayment" : "Interest Only"}</span>
+              </div>
+              <div className="he-result-item">
+                <span className="he-result-label">Buyer Type</span>
+                <span style={{ color: "#555", fontWeight: 600 }}>{BUYER_LABEL[buyerType]}</span>
+              </div>
+              <div className="he-result-item">
                 <span className="he-result-label">Term</span>
                 <span style={{ color: "#555", fontWeight: 600 }}>{termNum} years ({termNum * 12} payments)</span>
               </div>
@@ -404,15 +487,9 @@ function MortgageCalc(props: MortgageCalcProps) {
                 <span style={{ color: "#555", fontWeight: 600 }}>{rateNum}%</span>
               </div>
 
-              {/* ── SDLT note ── */}
+              {/* SDLT estimate */}
               {priceNum > 0 && (
-                <div style={{
-                  marginTop: 20,
-                  background: "#f0f6ff",
-                  border: "1px solid #cde0f5",
-                  borderLeft: "4px solid #006AC1",
-                  padding: "14px 16px",
-                }}>
+                <div style={{ marginTop: 20, background: "#f0f6ff", border: "1px solid #cde0f5", borderLeft: "4px solid #006AC1", padding: "14px 16px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
                     <div>
                       <p style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, margin: "0 0 2px" }}>
@@ -427,18 +504,14 @@ function MortgageCalc(props: MortgageCalcProps) {
                     </div>
                     <button
                       type="button"
+                      className="he-no-print"
                       onClick={onViewSDLT}
                       style={{
-                        background: "#006AC1",
-                        color: "#fff",
-                        border: "none",
+                        background: "#006AC1", color: "#fff", border: "none",
                         padding: "8px 14px",
                         fontFamily: "'Open Sans', Arial, sans-serif",
-                        fontSize: 12,
-                        fontWeight: 700,
-                        cursor: "pointer",
-                        whiteSpace: "nowrap",
-                        flexShrink: 0,
+                        fontSize: 12, fontWeight: 700, cursor: "pointer",
+                        whiteSpace: "nowrap", flexShrink: 0,
                       }}
                     >
                       Full breakdown →
@@ -462,9 +535,16 @@ function MortgageCalc(props: MortgageCalcProps) {
                   </p>
                 </div>
               )}
+
+              {/* Print-only disclaimer */}
+              <div className="he-print-only" style={{ marginTop: 24, fontSize: 11, color: "#666", borderTop: "1px solid #ddd", paddingTop: 12, lineHeight: 1.6 }}>
+                Your home may be repossessed if you do not keep up repayments on your mortgage. This
+                calculation is for illustrative purposes only and does not constitute financial advice.
+                Heritage Estates is an appointed representative. Always consult a qualified mortgage adviser.
+              </div>
             </div>
           ) : (
-            <div style={{ background: "#f7faff", border: "2px dashed #dde8f5", padding: 32, textAlign: "center" }}>
+            <div className="he-no-print" style={{ background: "#f7faff", border: "2px dashed #dde8f5", padding: 32, textAlign: "center" }}>
               <div style={{ fontSize: 48, marginBottom: 16 }}>🏠</div>
               <p style={{ color: "#888", fontSize: 14, lineHeight: 1.7 }}>
                 Enter your property price, deposit, interest rate and term to see your estimated monthly repayments.
@@ -472,7 +552,7 @@ function MortgageCalc(props: MortgageCalcProps) {
             </div>
           )}
 
-          <div style={{ marginTop: 20, padding: "14px 16px", background: "#fff8e1", borderLeft: "4px solid #f59e0b", fontSize: 13, color: "#666", lineHeight: 1.6 }}>
+          <div className="he-no-print" style={{ marginTop: 20, padding: "14px 16px", background: "#fff8e1", borderLeft: "4px solid #f59e0b", fontSize: 13, color: "#666", lineHeight: 1.6 }}>
             <p style={{ margin: "0 0 6px", fontWeight: 700, color: "#555" }}>Important</p>
             <p style={{ margin: 0 }}>
               This calculator is for illustrative purposes only. Your home may be repossessed if you do not
@@ -481,7 +561,7 @@ function MortgageCalc(props: MortgageCalcProps) {
             </p>
           </div>
 
-          <div style={{ marginTop: 20, background: "#006AC1", padding: "20px 24px", textAlign: "center" }}>
+          <div className="he-no-print" style={{ marginTop: 20, background: "#006AC1", padding: "20px 24px", textAlign: "center" }}>
             <p style={{ color: "#fff", fontSize: 15, fontWeight: 600, marginBottom: 12 }}>Want personalised advice?</p>
             <Link href="/contact/" style={{ background: "#fff", color: "#006AC1", padding: "10px 24px", fontWeight: 700, fontSize: 14, display: "inline-block", textDecoration: "none" }}>
               Contact Us Today
@@ -498,11 +578,12 @@ function MortgageCalc(props: MortgageCalcProps) {
 ───────────────────────────────────────────────────────────────── */
 
 interface StampDutyProps {
-  price: string;      setPrice: (v: string) => void;
+  propertyRef: string;
+  price: string;        setPrice: (v: string) => void;
   buyerType: BuyerType; setBuyerType: (v: BuyerType) => void;
 }
 
-function StampDutyCalculator({ price, setPrice, buyerType, setBuyerType }: StampDutyProps) {
+function StampDutyCalculator({ propertyRef, price, setPrice, buyerType, setBuyerType }: StampDutyProps) {
   const priceNum = parseFloat(price.replace(/,/g, "")) || 0;
   const { bands, total, ftbExceeds } = calcSDLT(priceNum, buyerType);
   const hasResult = priceNum > 0;
@@ -522,29 +603,52 @@ function StampDutyCalculator({ price, setPrice, buyerType, setBuyerType }: Stamp
           <div style={{ background: "#fff", border: "1px solid #dde8f5", padding: 28 }}>
             <h2 style={{ fontSize: 18, fontWeight: 700, color: "#333", marginBottom: 24 }}>Property Details</h2>
 
+            {propertyRef && (
+              <div style={{ marginBottom: 16, padding: "8px 12px", background: "#f0f6ff", borderLeft: "3px solid #006AC1", fontSize: 13, color: "#555" }}>
+                <span style={{ fontWeight: 700 }}>Ref:</span> {propertyRef}
+              </div>
+            )}
+
             <div className="he-form-field">
               <label>Property Price (£)</label>
-              <input
-                type="number"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                placeholder="e.g. 250000"
-                min="0"
-              />
-              <p style={{ fontSize: 12, color: "#888", marginTop: 4 }}>
-                Shared with the Mortgage Calculator tab.
-              </p>
+              <input type="number" value={price} onChange={(e) => setPrice(e.target.value)}
+                placeholder="e.g. 250000" min="0" />
+              <p style={{ fontSize: 12, color: "#888", marginTop: 4 }}>Shared with the Mortgage Calculator tab.</p>
             </div>
 
             <BuyerTypeSelector value={buyerType} onChange={setBuyerType} />
           </div>
         </div>
 
-        {/* ── Results ── */}
-        <div style={{ flex: "1 1 320px" }}>
+        {/* ── Results (print target) ── */}
+        <div style={{ flex: "1 1 320px" }} id="he-print-target">
+
+          {/* Print-only header */}
+          <PrintHeader propertyRef={propertyRef} title="Stamp Duty (SDLT) Calculation" />
+
           <div style={{ background: "#fff", border: "1px solid #dde8f5", padding: 28, minHeight: 260 }}>
-            <h2 style={{ fontSize: 18, fontWeight: 700, color: "#333", marginBottom: 4 }}>SDLT Calculation</h2>
-            <p style={{ fontSize: 13, color: "#888", marginBottom: 20 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+              <h2 style={{ fontSize: 18, fontWeight: 700, color: "#333", margin: 0 }}>SDLT Calculation</h2>
+              {hasResult && (
+                <button
+                  type="button"
+                  className="he-no-print"
+                  onClick={() => window.print()}
+                  style={{
+                    background: "#fff",
+                    color: "#006AC1",
+                    border: "2px solid #006AC1",
+                    padding: "6px 12px",
+                    fontFamily: "'Open Sans', Arial, sans-serif",
+                    fontSize: 12, fontWeight: 700, cursor: "pointer",
+                    display: "flex", alignItems: "center", gap: 5,
+                  }}
+                >
+                  <span>⬇</span> Save as PDF
+                </button>
+              )}
+            </div>
+            <p style={{ fontSize: 13, color: "#888", marginBottom: 20, marginTop: 4 }}>
               Rates based on current GOV.UK guidance (England &amp; Northern Ireland).
             </p>
 
@@ -587,9 +691,13 @@ function StampDutyCalculator({ price, setPrice, buyerType, setBuyerType }: Stamp
                       : info.text}
                   </p>
                   <a href="https://www.gov.uk/stamp-duty-land-tax" target="_blank" rel="noopener noreferrer"
+                    className="he-no-print"
                     style={{ fontSize: 13, color: "#006AC1", fontWeight: 700, textDecoration: "none" }}>
                     Verify on GOV.UK →
                   </a>
+                  <p className="he-print-only" style={{ fontSize: 11, color: "#888", margin: "8px 0 0" }}>
+                    Source: gov.uk/stamp-duty-land-tax (England &amp; Northern Ireland, post 1 April 2025)
+                  </p>
                 </div>
               </>
             ) : (
@@ -602,7 +710,7 @@ function StampDutyCalculator({ price, setPrice, buyerType, setBuyerType }: Stamp
             )}
           </div>
 
-          <div style={{ marginTop: 16, padding: "14px 16px", background: "#fff8e1", borderLeft: "4px solid #f59e0b", fontSize: 13, color: "#666", lineHeight: 1.6 }}>
+          <div className="he-no-print" style={{ marginTop: 16, padding: "14px 16px", background: "#fff8e1", borderLeft: "4px solid #f59e0b", fontSize: 13, color: "#666", lineHeight: 1.6 }}>
             <p style={{ margin: "0 0 4px", fontWeight: 700, color: "#555" }}>Important</p>
             <p style={{ margin: 0 }}>
               This calculator covers England &amp; Northern Ireland SDLT only. Scotland uses Land and
@@ -611,7 +719,7 @@ function StampDutyCalculator({ price, setPrice, buyerType, setBuyerType }: Stamp
             </p>
           </div>
 
-          <div style={{ marginTop: 16, background: "#006AC1", padding: "20px 24px", textAlign: "center" }}>
+          <div className="he-no-print" style={{ marginTop: 16, background: "#006AC1", padding: "20px 24px", textAlign: "center" }}>
             <p style={{ color: "#fff", fontSize: 15, fontWeight: 600, marginBottom: 12 }}>Want personalised advice?</p>
             <Link href="/contact/" style={{ background: "#fff", color: "#006AC1", padding: "10px 24px", fontWeight: 700, fontSize: 14, display: "inline-block", textDecoration: "none" }}>
               Contact Us Today
@@ -630,7 +738,7 @@ function StampDutyCalculator({ price, setPrice, buyerType, setBuyerType }: Stamp
 export default function MortgageCalculatorPage() {
   const [activeTab, setActiveTab] = useState<CalcTab>("mortgage");
 
-  // ── Shared state ──
+  const [propertyRef,    setPropertyRef]    = useState("");
   const [price,          setPrice]          = useState("");
   const [depositAmount,  setDepositAmount]  = useState("");
   const [depositPercent, setDepositPercent] = useState("");
@@ -641,7 +749,8 @@ export default function MortgageCalculatorPage() {
   const [stressRate,     setStressRate]     = useState("");
   const [buyerType,      setBuyerType]      = useState<BuyerType>("main-residence");
 
-  const sharedState: SharedState = {
+  const shared: SharedState = {
+    propertyRef, setPropertyRef,
     price, setPrice,
     depositAmount, setDepositAmount,
     depositPercent, setDepositPercent,
@@ -678,12 +787,10 @@ export default function MortgageCalculatorPage() {
         </div>
 
         {activeTab === "mortgage" ? (
-          <MortgageCalc
-            {...sharedState}
-            onViewSDLT={() => setActiveTab("stamp-duty")}
-          />
+          <MortgageCalc {...shared} onViewSDLT={() => setActiveTab("stamp-duty")} />
         ) : (
           <StampDutyCalculator
+            propertyRef={propertyRef}
             price={price}
             setPrice={setPrice}
             buyerType={buyerType}
