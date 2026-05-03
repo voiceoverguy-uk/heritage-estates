@@ -103,14 +103,28 @@ function buildAddress(addr: Record<string, string | undefined>): string {
     .join(", ");
 }
 
-function getPropertyTypeLabel(raw: unknown): string {
-  if (!raw) return "—";
-  if (typeof raw === "string") return raw;
-  if (typeof raw === "object" && raw !== null) {
-    const obj = raw as Record<string, unknown>;
-    return String(obj.prefLabel ?? obj.label ?? "—");
+function extractLabel(val: unknown): string | null {
+  if (!val) return null;
+  if (typeof val === "string") return val;
+  if (Array.isArray(val) && val.length > 0) {
+    const first = val[0];
+    if (typeof first === "string") return first;
+    if (typeof first === "object" && first !== null) {
+      const o = first as Record<string, unknown>;
+      return typeof o._value === "string" ? o._value : null;
+    }
   }
-  return "—";
+  if (typeof val === "object" && val !== null) {
+    const o = val as Record<string, unknown>;
+    return typeof o._value === "string" ? o._value : null;
+  }
+  return null;
+}
+
+function getPropertyTypeLabel(raw: unknown): string {
+  if (!raw || typeof raw !== "object") return typeof raw === "string" ? raw : "—";
+  const obj = raw as Record<string, unknown>;
+  return extractLabel(obj.prefLabel) ?? extractLabel(obj.label) ?? "—";
 }
 
 type WidgetState = "loading" | "error" | "empty" | "ready";
@@ -168,6 +182,7 @@ function LeicesterPropertyData() {
             fontSize: 13,
             fontWeight: 700,
             cursor: "pointer",
+            borderRadius: 0,
           }}
         >
           ↻ Refresh
