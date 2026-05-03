@@ -113,14 +113,14 @@ function getPropertyTypeLabel(raw: unknown): string {
   return "—";
 }
 
+type WidgetState = "loading" | "error" | "empty" | "ready";
+
 function LeicesterPropertyData() {
   const [sales, setSales] = useState<SaleRecord[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [state, setState] = useState<WidgetState>("loading");
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(false);
+    setState("loading");
     try {
       const url =
         "https://landregistry.data.gov.uk/data/ppi/transaction-record.json" +
@@ -140,11 +140,9 @@ function LeicesterPropertyData() {
         .filter((r) => r.pricePaid > 0)
         .slice(0, 10);
       setSales(parsed);
-      if (parsed.length === 0) setError(true);
+      setState(parsed.length === 0 ? "empty" : "ready");
     } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
+      setState("error");
     }
   }, []);
 
@@ -176,19 +174,25 @@ function LeicesterPropertyData() {
         </button>
       </div>
 
-      {loading && (
+      {state === "loading" && (
         <div style={{ textAlign: "center", padding: "32px 0", color: "#888", fontSize: 14 }}>
           Loading latest sales data…
         </div>
       )}
 
-      {!loading && error && (
+      {state === "error" && (
         <div style={{ background: "#f7faff", border: "1px solid #dde8f5", padding: "28px 24px", textAlign: "center", color: "#888", fontSize: 14, lineHeight: 1.7 }}>
           Market data temporarily unavailable. Please check back shortly.
         </div>
       )}
 
-      {!loading && !error && sales.length > 0 && (
+      {state === "empty" && (
+        <div style={{ background: "#f7faff", border: "1px solid #dde8f5", padding: "28px 24px", textAlign: "center", color: "#888", fontSize: 14, lineHeight: 1.7 }}>
+          No recent sales data found for Leicester. Please check back later.
+        </div>
+      )}
+
+      {state === "ready" && (
         <>
           <div style={{ background: "#006AC1", color: "#fff", padding: "18px 24px", marginBottom: 20, fontSize: 18, fontWeight: 700 }}>
             Average recent sale price in Leicester:{" "}
@@ -246,6 +250,8 @@ export default function MortgageBrokerLeicester() {
       <PageWrapper regulatory="Your home may be repossessed if you do not keep up repayments on your mortgage.">
 
         <h1 style={{ color: "#006AC1", marginBottom: 16 }}>Mortgage Broker Leicester</h1>
+
+        <h2 style={{ color: "#006AC1", fontSize: 22, marginBottom: 12 }}>Independent Mortgage Advice in Leicester</h2>
         <p style={{ fontSize: 16, color: "#444", lineHeight: 1.8, marginBottom: 40 }}>
           Heritage Estates is Leicester's trusted estate agent and in-house mortgage broker. Whether
           you're a first-time buyer, moving home, or investing in property, our FCA-regulated mortgage
