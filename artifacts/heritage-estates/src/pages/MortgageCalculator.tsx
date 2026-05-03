@@ -1183,7 +1183,7 @@ function BorrowingEstimator() {
   const upper = Math.max(0, combined * 4.5 - debtAnnual - depDeduction);
   const lower = Math.max(0, combined * 4.0 - debtAnnual - depDeduction);
 
-  const hasResult = s1 > 0;
+  const hasResult = s1 > 0 || (mode === "joint" && s2 > 0);
 
   const label: React.CSSProperties = {
     display: "block",
