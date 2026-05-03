@@ -14,7 +14,7 @@ export default function OurTeam() {
       <PageWrapper>
         <h1 style={{ color: "#006AC1", marginBottom: 32 }}>Our Team</h1>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 40 }}>
-          <div style={{ flex: "0 0 220px" }}>
+          <div className="he-team-photo" style={{ flex: "0 0 220px" }}>
             <img
               src="https://heritageestates.co.uk/wp-content/uploads/julia-towarrianskyj.png"
               alt="Julia Towarianskyj"
@@ -37,8 +37,8 @@ export default function OurTeam() {
             </p>
 
             <h3 style={{ color: "#006AC1", fontSize: 16, marginBottom: 12 }}>Specific Areas of Expertise</h3>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, border: "1px solid #dde8f5", marginBottom: 24 }}>
-              <div style={{ padding: "16px", borderRight: "1px solid #dde8f5" }}>
+            <div className="he-expertise-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, border: "1px solid #dde8f5", marginBottom: 24 }}>
+              <div className="he-expertise-col-left" style={{ padding: "16px", borderRight: "1px solid #dde8f5" }}>
                 <ul style={{ listStyle: "disc", paddingLeft: 18, margin: 0, fontSize: 14, color: "#444", lineHeight: 2 }}>
                   <li>First Time Buyers</li>
                   <li>Remortgages</li>

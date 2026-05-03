@@ -65,7 +65,7 @@ export default function Home() {
 
       {/* Main heading */}
       <div style={{ textAlign: "center", padding: "40px 16px 20px", maxWidth: 1100, margin: "0 auto" }}>
-        <h1 style={{ color: "#006AC1", fontSize: 32, fontWeight: 400 }}>Mortgage &amp; Insurance Services</h1>
+        <h1 className="he-home-heading" style={{ color: "#006AC1", fontSize: 32, fontWeight: 400 }}>Mortgage &amp; Insurance Services</h1>
         <p style={{ maxWidth: 680, margin: "16px auto 0", fontSize: 15, color: "#555", lineHeight: 1.7 }}>
           Your home may be repossessed if you do not keep up repayments on your mortgage. The Financial Conduct Authority do not regulate commercial and some buy to let mortgages. Commercial mortgages are available by referral only.
         </p>
@@ -73,7 +73,7 @@ export default function Home() {
 
       {/* Service grid */}
       <div style={{ maxWidth: 1100, margin: "30px auto", padding: "0 16px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16 }}>
+        <div className="he-service-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16 }}>
           {services.map((svc) => (
             <Link key={svc.href} href={svc.href} style={{ textDecoration: "none" }}>
               <div className="he-service-card">
@@ -103,7 +103,7 @@ export default function Home() {
       {/* Commitment section */}
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "50px 16px 0" }}>
         <h2 style={{ color: "#006AC1", marginBottom: 24 }}>Our Commitment To You</h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
+        <div className="he-commitment-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
           <div className="he-commitment-box">
             <h3>Saving you money</h3>
             <p style={{ fontSize: 14, color: "#555", margin: 0 }}>We'll help to ensure you don't waste money unnecessarily by paying a higher monthly amount than you need to for your mortgage.</p>

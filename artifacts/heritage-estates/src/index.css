@@ -339,5 +339,86 @@
   .he-hero {
     height: 220px;
   }
-  .desktop-nav-top { display: none; }
+  .desktop-nav-top { display: none !important; }
+}
+
+/* ── Mobile / small-screen overrides (≤ 480 px) ─────────────────────────── */
+@media (max-width: 480px) {
+  /* Prevent any element from breaking out of the viewport */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Top bar — hide on very small screens to save space */
+  .he-top-bar {
+    font-size: 12px;
+  }
+
+  /* Hero — shorter on phones */
+  .he-hero {
+    height: 160px;
+  }
+
+  /* Service grid: 2-column on mobile */
+  .he-service-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  /* Service card image height reduced on mobile */
+  .he-service-card img {
+    height: 110px;
+  }
+
+  /* Home heading size */
+  .he-home-heading {
+    font-size: 22px !important;
+  }
+
+  /* Team page: photo full-width, centred */
+  .he-team-photo {
+    flex: 0 0 100% !important;
+    max-width: 180px !important;
+    margin: 0 auto 8px !important;
+  }
+
+  /* Team expertise grid: single column */
+  .he-expertise-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .he-expertise-col-left {
+    border-right: none !important;
+    border-bottom: 1px solid #dde8f5;
+  }
+
+  /* Calculator: result items stack label above value */
+  .he-result-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 8px 0;
+  }
+
+  .he-result-value {
+    font-size: 16px;
+  }
+
+  /* CTA boxes: full width stacked */
+  .he-cta-box {
+    flex: 1 1 100% !important;
+    margin: 4px 0 !important;
+  }
+
+  /* Footer columns: single column */
+  .he-footer .he-footer-cols {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* Commitment grid: single column */
+  .he-commitment-grid {
+    grid-template-columns: 1fr !important;
+  }
 }

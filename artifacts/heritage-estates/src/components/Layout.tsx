@@ -163,7 +163,7 @@ export default function Layout({ children }: LayoutProps) {
       {/* Footer */}
       <footer className="he-footer">
         <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 16px" }}>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 40, marginBottom: 20 }}>
+          <div className="he-footer-cols" style={{ display: "flex", flexWrap: "wrap", gap: 40, marginBottom: 20 }}>
             <div style={{ flex: "1 1 280px" }}>
               <img
                 src="https://heritageestates.co.uk/wp-content/uploads/logo-heritage-estates.png"
