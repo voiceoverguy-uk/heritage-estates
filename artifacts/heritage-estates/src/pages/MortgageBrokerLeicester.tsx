@@ -4,8 +4,6 @@ import SeoHead from "@/components/SeoHead";
 import PageWrapper from "@/components/PageWrapper";
 import CtaBoxes from "@/components/CtaBoxes";
 
-/* ── FAQ items ────────────────────────────────────────────────────── */
-
 const faqItems = [
   {
     q: "What is a mortgage broker?",
@@ -37,8 +35,6 @@ const faqItems = [
   },
 ];
 
-/* ── Areas served ────────────────────────────────────────────────── */
-
 const areasServed = [
   {
     name: "Leicester City",
@@ -67,8 +63,6 @@ const areasServed = [
   },
 ];
 
-/* ── [CLIENT TO ADD] callout style ──────────────────────────────── */
-
 function ClientNote({ children }: { children: React.ReactNode }) {
   return (
     <div style={{
@@ -86,8 +80,6 @@ function ClientNote({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* ── Land Registry property data component ──────────────────────── */
-
 interface SaleRecord {
   address: string;
   propertyType: string;
@@ -100,13 +92,9 @@ function fmt(n: number) {
 }
 
 function formatDate(raw: string) {
-  try {
-    return new Date(raw).toLocaleDateString("en-GB", {
-      day: "numeric", month: "short", year: "numeric",
-    });
-  } catch {
-    return raw;
-  }
+  const d = new Date(raw);
+  if (isNaN(d.getTime())) return raw;
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 }
 
 function buildAddress(addr: Record<string, string | undefined>): string {
@@ -202,14 +190,7 @@ function LeicesterPropertyData() {
 
       {!loading && !error && sales.length > 0 && (
         <>
-          <div style={{
-            background: "#006AC1",
-            color: "#fff",
-            padding: "18px 24px",
-            marginBottom: 20,
-            fontSize: 18,
-            fontWeight: 700,
-          }}>
+          <div style={{ background: "#006AC1", color: "#fff", padding: "18px 24px", marginBottom: 20, fontSize: 18, fontWeight: 700 }}>
             Average recent sale price in Leicester:{" "}
             <span style={{ fontSize: 22 }}>£{fmt(avgPrice)}</span>
           </div>
@@ -250,8 +231,6 @@ function LeicesterPropertyData() {
   );
 }
 
-/* ── Page component ─────────────────────────────────────────────── */
-
 export default function MortgageBrokerLeicester() {
   return (
     <>
@@ -266,7 +245,6 @@ export default function MortgageBrokerLeicester() {
 
       <PageWrapper regulatory="Your home may be repossessed if you do not keep up repayments on your mortgage.">
 
-        {/* ── Section 1: Intro ─────────────────────────────────── */}
         <h1 style={{ color: "#006AC1", marginBottom: 16 }}>Mortgage Broker Leicester</h1>
         <p style={{ fontSize: 16, color: "#444", lineHeight: 1.8, marginBottom: 40 }}>
           Heritage Estates is Leicester's trusted estate agent and in-house mortgage broker. Whether
@@ -275,7 +253,6 @@ export default function MortgageBrokerLeicester() {
           one lender.
         </p>
 
-        {/* ── Section 2: Why Choose ─────────────────────────────── */}
         <h2 style={{ color: "#006AC1", fontSize: 22, marginBottom: 12 }}>Why Choose Our Mortgage Broker in Leicester</h2>
         <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 8 }}>
           Unlike comparison websites or call centres, our mortgage broker in Leicester sits within our
@@ -285,7 +262,6 @@ export default function MortgageBrokerLeicester() {
         <ClientNote>Specific broker name, qualifications, and years of experience</ClientNote>
         <div style={{ marginBottom: 40 }} />
 
-        {/* ── Section 3: Whole of Market ───────────────────────── */}
         <h2 style={{ color: "#006AC1", fontSize: 22, marginBottom: 12 }}>Whole of Market Access</h2>
         <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 8 }}>
           We search deals from across the whole mortgage market, including lenders not available
@@ -295,7 +271,6 @@ export default function MortgageBrokerLeicester() {
         <ClientNote>Lender panel details or accreditations</ClientNote>
         <div style={{ marginBottom: 40 }} />
 
-        {/* ── Section 4: Leicester Property Market ─────────────── */}
         <h2 style={{ color: "#006AC1", fontSize: 22, marginBottom: 12 }}>Leicester Property Market</h2>
         <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 8 }}>
           Leicester's property market has remained resilient, with strong demand across areas including
@@ -306,7 +281,6 @@ export default function MortgageBrokerLeicester() {
         <ClientNote>Latest local market commentary or stats from Land Registry</ClientNote>
         <div style={{ marginBottom: 40 }} />
 
-        {/* ── Section 5: FCA Regulated ─────────────────────────── */}
         <h2 style={{ color: "#006AC1", fontSize: 22, marginBottom: 12 }}>FCA Regulated Advice</h2>
         <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 8 }}>
           All mortgage advice provided through Heritage Estates is fully FCA regulated. Our advisers
@@ -317,7 +291,6 @@ export default function MortgageBrokerLeicester() {
           Your home may be repossessed if you do not keep up repayments on your mortgage.
         </p>
 
-        {/* ── Section 6: Get in Touch ───────────────────────────── */}
         <h2 style={{ color: "#006AC1", fontSize: 22, marginBottom: 12 }}>Get in Touch</h2>
         <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 8 }}>
           Ready to find out how much you could borrow? Contact our Leicester mortgage broker team today.
@@ -332,7 +305,6 @@ export default function MortgageBrokerLeicester() {
         </p>
         <div style={{ marginBottom: 48 }} />
 
-        {/* ── Areas served ─────────────────────────────────────── */}
         <h2 style={{ color: "#006AC1", fontSize: 20, marginBottom: 16 }}>Areas we serve across Leicestershire</h2>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 20, marginBottom: 48 }}>
           {areasServed.map(({ name, description }) => (
@@ -346,10 +318,8 @@ export default function MortgageBrokerLeicester() {
           ))}
         </div>
 
-        {/* ── Land Registry recent sales ───────────────────────── */}
         <LeicesterPropertyData />
 
-        {/* ── FAQ ──────────────────────────────────────────────── */}
         <h2 style={{ color: "#006AC1", fontSize: 20, marginBottom: 20 }}>
           Frequently asked questions — mortgage brokers in Leicester
         </h2>
@@ -362,7 +332,6 @@ export default function MortgageBrokerLeicester() {
           ))}
         </div>
 
-        {/* ── Google Business note ─────────────────────────────── */}
         <div style={{ background: "#fff8e1", border: "1px solid #f59e0b", borderLeft: "4px solid #f59e0b", padding: "16px 20px", marginBottom: 40, fontSize: 13, color: "#666", lineHeight: 1.6 }}>
           <strong style={{ color: "#555" }}>Looking for us on Google?</strong> Search "Heritage Estates Leicester" or "Heritage Estates Oadby" to find our Google Business Profile, read client reviews, and get directions to our office at 2 Brooksby Drive, Oadby, Leicester LE2 5AA.
         </div>
