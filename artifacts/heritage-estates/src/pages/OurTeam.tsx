@@ -1,13 +1,16 @@
-import { Helmet } from "react-helmet-async";
+import SeoHead from "@/components/SeoHead";
 import PageWrapper from "@/components/PageWrapper";
 
 export default function OurTeam() {
   return (
     <>
-      <Helmet>
-        <title>Our Team - Heritage Estates</title>
-        <meta name="description" content="Meet the Heritage Estates team. Julia Towarianskyj is our CeMAP-trained Mortgage & Insurance Adviser with over 15 years of experience." />
-      </Helmet>
+      <SeoHead
+        title="Our Team - Heritage Estates"
+        description="Meet the Heritage Estates team. Julia Towarianskyj is our CeMAP-trained Mortgage & Insurance Adviser with over 15 years of experience."
+        path="/our-team/"
+        schemaType="AboutPage"
+        ogImage="https://heritageestates.co.uk/wp-content/uploads/julia-towarrianskyj.png"
+      />
       <PageWrapper>
         <h1 style={{ color: "#006AC1", marginBottom: 32 }}>Our Team</h1>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 40 }}>

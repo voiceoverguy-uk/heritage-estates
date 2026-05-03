@@ -1,5 +1,5 @@
-import { Helmet } from "react-helmet-async";
 import { Link } from "wouter";
+import SeoHead from "@/components/SeoHead";
 import PageWrapper from "@/components/PageWrapper";
 import CommitmentSection from "@/components/CommitmentSection";
 import CtaBoxes from "@/components/CtaBoxes";
@@ -7,10 +7,12 @@ import CtaBoxes from "@/components/CtaBoxes";
 export default function FirstTimeBuyers() {
   return (
     <>
-      <Helmet>
-        <title>First Time Buyers Mortgages on fixed rates by Heritage Estates</title>
-        <meta name="description" content="Heritage Estates help first time buyers navigate the mortgage process in Leicester and Oadby. Get expert advice tailored to your circumstances." />
-      </Helmet>
+      <SeoHead
+        title="First Time Buyers Mortgages on fixed rates by Heritage Estates"
+        description="Heritage Estates help first time buyers navigate the mortgage process in Leicester and Oadby. Get expert advice tailored to your circumstances."
+        path="/mortgages-for-first-time-buyers/"
+        ogImage="https://heritageestates.co.uk/wp-content/uploads/mortgages-for-first-time-buyers-524x349.jpg"
+      />
       <PageWrapper regulatory="Your home may be repossessed if you do not keep up repayments on your mortgage.">
         <h1 style={{ color: "#006AC1", marginBottom: 24, letterSpacing: 1 }}>MORTGAGES FOR FIRST TIME BUYERS</h1>
 

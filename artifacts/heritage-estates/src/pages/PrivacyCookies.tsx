@@ -1,13 +1,14 @@
-import { Helmet } from "react-helmet-async";
+import SeoHead from "@/components/SeoHead";
 import PageWrapper from "@/components/PageWrapper";
 
 export default function PrivacyCookies() {
   return (
     <>
-      <Helmet>
-        <title>Privacy & Cookies - Heritage Estates</title>
-        <meta name="description" content="Heritage Estates privacy and cookies policy. Learn how we collect, use and protect your personal information." />
-      </Helmet>
+      <SeoHead
+        title="Privacy & Cookies - Heritage Estates"
+        description="Heritage Estates privacy and cookies policy. Learn how we collect, use and protect your personal information."
+        path="/privacy-cookies/"
+      />
       <PageWrapper>
         <h1 style={{ color: "#006AC1", marginBottom: 8 }}>Privacy &amp; Cookies</h1>
         <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 32 }}>

@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet-async";
+import SeoHead from "@/components/SeoHead";
 import PageWrapper from "@/components/PageWrapper";
 import CommitmentSection from "@/components/CommitmentSection";
 import CtaBoxes from "@/components/CtaBoxes";
@@ -6,10 +6,12 @@ import CtaBoxes from "@/components/CtaBoxes";
 export default function ResidentialMortgages() {
   return (
     <>
-      <Helmet>
-        <title>Personal services on Residential Mortgages for Leicester and Oadby</title>
-        <meta name="description" content="Heritage Estates offer personal residential mortgage services in Leicester and Oadby. Whole of market advisers helping you find the right mortgage." />
-      </Helmet>
+      <SeoHead
+        title="Personal services on Residential Mortgages for Leicester and Oadby"
+        description="Heritage Estates offer personal residential mortgage services in Leicester and Oadby. Whole of market advisers helping you find the right mortgage."
+        path="/residential-mortgages/"
+        ogImage="https://heritageestates.co.uk/wp-content/uploads/residential-mortgages-524x349.jpg"
+      />
       <PageWrapper regulatory="Your home may be repossessed if you do not keep up repayments on your mortgage.">
         <h1 style={{ color: "#006AC1", marginBottom: 24 }}>Residential Mortgages</h1>
 

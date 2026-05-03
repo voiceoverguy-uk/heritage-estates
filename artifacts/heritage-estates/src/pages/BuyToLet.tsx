@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet-async";
+import SeoHead from "@/components/SeoHead";
 import PageWrapper from "@/components/PageWrapper";
 import CtaBoxes from "@/components/CtaBoxes";
 
@@ -20,10 +20,12 @@ const commitmentItems = [
 export default function BuyToLet() {
   return (
     <>
-      <Helmet>
-        <title>Buy-To-Let Mortgages offered by the advisors from Heritage Estates</title>
-        <meta name="description" content="Heritage Estates offer buy-to-let mortgage advice in Leicester and Oadby. Whole of market access to help you find the right investment property mortgage." />
-      </Helmet>
+      <SeoHead
+        title="Buy-To-Let Mortgages offered by the advisors from Heritage Estates"
+        description="Heritage Estates offer buy-to-let mortgage advice in Leicester and Oadby. Whole of market access to help you find the right investment property mortgage."
+        path="/buy-to-let-mortgages/"
+        ogImage="https://heritageestates.co.uk/wp-content/uploads/buy-to-let-mortgages-524x349.jpg"
+      />
       <PageWrapper regulatory="The Financial Conduct Authority do not regulate some buy to let mortgages.">
         <h1 style={{ color: "#006AC1", marginBottom: 24, letterSpacing: 1 }}>BUY TO LET MORTGAGES</h1>
 

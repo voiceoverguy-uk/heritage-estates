@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import { Helmet } from "react-helmet-async";
 import { Link } from "wouter";
+import SeoHead from "@/components/SeoHead";
 import PageWrapper from "@/components/PageWrapper";
 
 type MortgageType = "repayment" | "interest-only";
@@ -90,10 +90,11 @@ export default function MortgageCalculator() {
 
   return (
     <>
-      <Helmet>
-        <title>Mortgage Calculator - Heritage Estates</title>
-        <meta name="description" content="Use Heritage Estates' mortgage calculator to estimate your monthly repayments. Calculate repayment and interest-only mortgages with stress testing." />
-      </Helmet>
+      <SeoHead
+        title="Mortgage Calculator - Heritage Estates"
+        description="Use Heritage Estates' mortgage calculator to estimate your monthly repayments. Calculate repayment and interest-only mortgages with stress testing."
+        path="/mortgage-calculator/"
+      />
       <PageWrapper>
         <h1 style={{ color: "#006AC1", marginBottom: 12 }}>Mortgage Calculator</h1>
         <p style={{ fontSize: 15, color: "#555", marginBottom: 32, lineHeight: 1.7 }}>

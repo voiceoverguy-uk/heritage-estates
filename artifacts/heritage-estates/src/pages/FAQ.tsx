@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Helmet } from "react-helmet-async";
 import { Link } from "wouter";
+import SeoHead from "@/components/SeoHead";
 import PageWrapper from "@/components/PageWrapper";
 import CtaBoxes from "@/components/CtaBoxes";
 
@@ -67,10 +67,13 @@ function AccordionItem({ q, a }: { q: string; a: string }) {
 export default function FAQ() {
   return (
     <>
-      <Helmet>
-        <title>FAQs on Fees, Lenders, Fixed rate Mortgages, Lifetime Tracker Mortgages</title>
-        <meta name="description" content="Frequently asked questions about mortgages and the service Heritage Estates provide, including fees, lenders, fixed rate mortgages and tracker mortgages." />
-      </Helmet>
+      <SeoHead
+        title="FAQs on Fees, Lenders, Fixed rate Mortgages, Lifetime Tracker Mortgages"
+        description="Frequently asked questions about mortgages and the service Heritage Estates provide, including fees, lenders, fixed rate mortgages and tracker mortgages."
+        path="/faq/"
+        schemaType="FAQPage"
+        faqItems={faqs}
+      />
       <PageWrapper>
         <h1 style={{ color: "#006AC1", marginBottom: 16 }}>Frequently Asked Questions</h1>
         <p style={{ fontSize: 15, color: "#555", marginBottom: 32 }}>

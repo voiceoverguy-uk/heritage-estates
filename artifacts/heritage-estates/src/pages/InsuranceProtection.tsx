@@ -1,15 +1,17 @@
-import { Helmet } from "react-helmet-async";
 import { Link } from "wouter";
+import SeoHead from "@/components/SeoHead";
 import PageWrapper from "@/components/PageWrapper";
 import CtaBoxes from "@/components/CtaBoxes";
 
 export default function InsuranceProtection() {
   return (
     <>
-      <Helmet>
-        <title>★ Affordable Mortgage Insurance & Protection Services by Heritage Estates ★</title>
-        <meta name="description" content="Heritage Estates provide affordable mortgage insurance and protection services including life insurance, critical illness cover and income protection in Leicester." />
-      </Helmet>
+      <SeoHead
+        title="★ Affordable Mortgage Insurance & Protection Services by Heritage Estates ★"
+        description="Heritage Estates provide affordable mortgage insurance and protection services including life insurance, critical illness cover and income protection in Leicester."
+        path="/insurance-protection/"
+        ogImage="https://heritageestates.co.uk/wp-content/uploads/insurance-and-protection-524x349.jpg"
+      />
       <PageWrapper>
         <h1 style={{ color: "#006AC1", marginBottom: 24, letterSpacing: 1 }}>INSURANCE &amp; PROTECTION</h1>
 

@@ -1,5 +1,5 @@
-import { Helmet } from "react-helmet-async";
 import { Link } from "wouter";
+import SeoHead from "@/components/SeoHead";
 import CtaBoxes from "@/components/CtaBoxes";
 
 const services = [
@@ -48,10 +48,12 @@ const services = [
 export default function Home() {
   return (
     <>
-      <Helmet>
-        <title>Mortgage Broker in Leicester and Oadby</title>
-        <meta name="description" content="Heritage Estates are mortgage brokers based in Oadby, Leicester. We offer residential mortgages, buy-to-let, remortgages, first time buyer advice and insurance services." />
-      </Helmet>
+      <SeoHead
+        title="Mortgage Broker in Leicester and Oadby"
+        description="Heritage Estates are mortgage brokers based in Oadby, Leicester. We offer residential mortgages, buy-to-let, remortgages, first time buyer advice and insurance services."
+        path="/"
+        schemaType="WebPage"
+      />
 
       {/* Hero */}
       <div className="he-hero">

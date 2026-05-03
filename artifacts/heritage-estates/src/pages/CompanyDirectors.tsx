@@ -1,5 +1,5 @@
-import { Helmet } from "react-helmet-async";
 import { Link } from "wouter";
+import SeoHead from "@/components/SeoHead";
 import PageWrapper from "@/components/PageWrapper";
 import CommitmentSection from "@/components/CommitmentSection";
 import CtaBoxes from "@/components/CtaBoxes";
@@ -7,10 +7,12 @@ import CtaBoxes from "@/components/CtaBoxes";
 export default function CompanyDirectors() {
   return (
     <>
-      <Helmet>
-        <title>Mortgages for Company Directors</title>
-        <meta name="description" content="Heritage Estates are whole of market mortgage advisers specialising in mortgages for company directors in Leicester and Oadby." />
-      </Helmet>
+      <SeoHead
+        title="Mortgages for Company Directors"
+        description="Heritage Estates are whole of market mortgage advisers specialising in mortgages for company directors in Leicester and Oadby."
+        path="/mortgages-for-company-directors/"
+        ogImage="https://heritageestates.co.uk/wp-content/uploads/company-director-mortgages-524x349.jpg"
+      />
       <PageWrapper regulatory="Your home may be repossessed if you do not keep up repayments on your mortgage.">
         <h1 style={{ color: "#006AC1", marginBottom: 24 }}>Mortgages for Company Directors</h1>
 

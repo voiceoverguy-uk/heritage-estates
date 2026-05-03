@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet-async";
+import SeoHead from "@/components/SeoHead";
 import PageWrapper from "@/components/PageWrapper";
 import CommitmentSection from "@/components/CommitmentSection";
 import CtaBoxes from "@/components/CtaBoxes";
@@ -21,10 +21,12 @@ const remortgageCommitment = [
 export default function Remortgaging() {
   return (
     <>
-      <Helmet>
-        <title>Remortgaging, Raising Additional Capital and Re-financing in Leicester</title>
-        <meta name="description" content="Heritage Estates help with remortgaging, raising additional capital and re-financing in Leicester and Oadby. Expert whole-of-market mortgage advice." />
-      </Helmet>
+      <SeoHead
+        title="Remortgaging, Raising Additional Capital and Re-financing in Leicester"
+        description="Heritage Estates help with remortgaging, raising additional capital and re-financing in Leicester and Oadby. Expert whole-of-market mortgage advice."
+        path="/remortgaging/"
+        ogImage="https://heritageestates.co.uk/wp-content/uploads/remortgage-524x349.jpg"
+      />
       <PageWrapper regulatory="Think carefully before securing other debts against your home. Your home may be repossessed if you do not keep up repayments on your mortgage.">
         <h1 style={{ color: "#006AC1", marginBottom: 24, letterSpacing: 0.5 }}>REMORTGAGING, RAISING ADDITIONAL CAPITAL AND RE-FINANCING</h1>
 

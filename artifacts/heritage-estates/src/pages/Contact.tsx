@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Helmet } from "react-helmet-async";
+import SeoHead from "@/components/SeoHead";
 import PageWrapper from "@/components/PageWrapper";
 
 const services = [
@@ -29,10 +29,12 @@ export default function Contact() {
 
   return (
     <>
-      <Helmet>
-        <title>Regardless of your Mortgage Need or Question, Heritage Estates is here to help</title>
-        <meta name="description" content="Contact Heritage Estates for mortgage advice in Leicester and Oadby. Call us on 0116 253 7733 or fill in our enquiry form." />
-      </Helmet>
+      <SeoHead
+        title="Regardless of your Mortgage Need or Question, Heritage Estates is here to help"
+        description="Contact Heritage Estates for mortgage advice in Leicester and Oadby. Call us on 0116 253 7733 or fill in our enquiry form."
+        path="/contact/"
+        schemaType="ContactPage"
+      />
       <PageWrapper
         regulatory="The Financial Conduct Authority do not regulate commercial and some buy to let mortgages. Commercial mortgages are available by referral only."
       >

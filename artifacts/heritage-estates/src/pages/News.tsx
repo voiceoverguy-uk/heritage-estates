@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet-async";
+import SeoHead from "@/components/SeoHead";
 import PageWrapper from "@/components/PageWrapper";
 import CtaBoxes from "@/components/CtaBoxes";
 
@@ -59,10 +59,13 @@ const newsGroups = [
 export default function News() {
   return (
     <>
-      <Helmet>
-        <title>Latest News - Heritage Estates</title>
-        <meta name="description" content="Latest news, mortgage market updates, property reviews and economic insights from Heritage Estates." />
-      </Helmet>
+      <SeoHead
+        title="Latest News - Heritage Estates"
+        description="Latest news, mortgage market updates, property reviews and economic insights from Heritage Estates."
+        path="/news/"
+        schemaType="CollectionPage"
+        ogImage="https://heritageestates.co.uk/wp-content/uploads/latest-news-mobile-524x349.jpg"
+      />
       <PageWrapper>
         <h1 style={{ color: "#006AC1", marginBottom: 32 }}>Latest News</h1>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 24 }}>
