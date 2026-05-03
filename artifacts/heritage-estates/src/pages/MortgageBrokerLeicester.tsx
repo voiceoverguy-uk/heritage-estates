@@ -75,7 +75,7 @@ function ClientNote({ children }: { children: React.ReactNode }) {
       color: "#7c5a00",
       lineHeight: 1.6,
     }}>
-      <strong>✏️ CLIENT TO ADD:</strong> {children}
+      <strong>[CLIENT TO ADD]</strong> {children}
     </div>
   );
 }
@@ -266,7 +266,6 @@ export default function MortgageBrokerLeicester() {
 
         <h1 style={{ color: "#006AC1", marginBottom: 16 }}>Mortgage Broker Leicester</h1>
 
-        <h2 style={{ color: "#006AC1", fontSize: 22, marginBottom: 12 }}>Independent Mortgage Advice in Leicester</h2>
         <p style={{ fontSize: 16, color: "#444", lineHeight: 1.8, marginBottom: 40 }}>
           Heritage Estates is Leicester's trusted estate agent and in-house mortgage broker. Whether
           you're a first-time buyer, moving home, or investing in property, our FCA-regulated mortgage
