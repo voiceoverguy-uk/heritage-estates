@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://heritageestates.co.uk/sitemap.xml
