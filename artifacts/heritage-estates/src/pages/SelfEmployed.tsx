@@ -40,7 +40,7 @@ export default function SelfEmployed() {
           Sometimes you might use legitimate methods to reduce your income and pay less tax. However this can work against you when applying for a mortgage as most lenders will base at least some of their decision on your taxable income. Fortunately some lenders understand this, and you might be able to demonstrate that your business has retained profits which can help to increase the likelihood of your mortgage application being approved.
         </p>
         <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 32 }}>
-          As a self-employed person your income and financial affairs might be more complicated than someone in regular employment. At Heritage Estates we can review your circumstances and explain which mortgage products are most suitable. Why not{" "}
+          As a self-employed person your income and financial affairs might be more complicated than someone in regular employment. At Heritage Estates we can review your circumstances and explain which mortgage products are most suitable. As a whole-of-market <Link href="/mortgage-broker-leicester/">mortgage broker based in Leicester</Link>, we know which lenders are most flexible for self-employed applicants across Leicestershire. Why not{" "}
           <Link href="/contact/">contact us</Link> for a no-obligation chat.
         </p>
 

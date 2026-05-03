@@ -34,7 +34,7 @@ export default function ResidentialMortgages() {
         </p>
 
         <p style={{ fontSize: 15, color: "#444", lineHeight: 1.8, marginBottom: 24 }}>
-          We also advise on <Link href="/insurance-protection/">mortgage protection insurance</Link> — so you're covered if the unexpected happens. If you're buying for the first time, see our dedicated <Link href="/mortgages-for-first-time-buyers/">first time buyer mortgage</Link> page, or use our <Link href="/mortgage-calculator/">mortgage calculator</Link> to estimate your monthly repayments.
+          We also advise on <Link href="/insurance-protection/">mortgage protection insurance</Link> — so you're covered if the unexpected happens. If you're buying for the first time, see our dedicated <Link href="/mortgages-for-first-time-buyers/">first time buyer mortgage</Link> page, or use our <Link href="/mortgage-calculator/">mortgage calculator</Link> to estimate your monthly repayments. As an independent <Link href="/mortgage-broker-leicester/">mortgage broker in Leicester</Link>, we search the whole market to find the right deal for you.
         </p>
 
         <h3 style={{ color: "#006AC1", marginBottom: 12 }}>How We Work</h3>

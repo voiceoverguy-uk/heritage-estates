@@ -67,7 +67,7 @@ export default function Home() {
 
       {/* Main heading */}
       <div style={{ textAlign: "center", padding: "40px 16px 20px", maxWidth: 1100, margin: "0 auto" }}>
-        <h1 className="he-home-heading" style={{ color: "#006AC1", fontSize: 32, fontWeight: 400 }}>Mortgage &amp; Insurance Services</h1>
+        <h1 className="he-home-heading" style={{ color: "#006AC1", fontSize: 32, fontWeight: 400 }}>Mortgage Broker in Leicester &amp; Oadby</h1>
         <p style={{ maxWidth: 680, margin: "16px auto 0", fontSize: 15, color: "#555", lineHeight: 1.7 }}>
           Your home may be repossessed if you do not keep up repayments on your mortgage. The Financial Conduct Authority do not regulate commercial and some buy to let mortgages. Commercial mortgages are available by referral only.
         </p>
@@ -121,7 +121,7 @@ export default function Home() {
           <li>Birstall</li>
         </ul>
         <p style={{ fontSize: 15, color: "#555", lineHeight: 1.8 }}>
-          Whether you're a <Link href="/mortgages-for-first-time-buyers/" style={{ color: "#006AC1" }}>first time buyer</Link> in Leicester, a landlord with <Link href="/buy-to-let-mortgages/" style={{ color: "#006AC1" }}>buy-to-let properties</Link> across Leicestershire, or a <Link href="/mortgages-for-self-employed/" style={{ color: "#006AC1" }}>self-employed professional</Link> in Oadby seeking specialist mortgage advice — we're here to help.
+          Whether you're a <Link href="/mortgages-for-first-time-buyers/" style={{ color: "#006AC1" }}>first time buyer</Link> in Leicester, a landlord with <Link href="/buy-to-let-mortgages/" style={{ color: "#006AC1" }}>buy-to-let properties</Link> across Leicestershire, or a <Link href="/mortgages-for-self-employed/" style={{ color: "#006AC1" }}>self-employed professional</Link> in Oadby seeking specialist mortgage advice — we're here to help. Find out more about how we work as your <Link href="/mortgage-broker-leicester/" style={{ color: "#006AC1" }}>local mortgage broker in Leicester</Link>.
         </p>
       </div>
 
