@@ -8,8 +8,8 @@ export default function CompanyDirectors() {
   return (
     <>
       <SeoHead
-        title="Mortgages for Company Directors"
-        description="Heritage Estates are whole of market mortgage advisers specialising in mortgages for company directors in Leicester and Oadby."
+        title="Mortgages for Company Directors Leicester | Heritage Estates"
+        description="Heritage Estates are whole-of-market mortgage advisers specialising in mortgages for company directors in Leicester and across Leicestershire."
         path="/mortgages-for-company-directors/"
         ogImage="https://heritageestates.co.uk/wp-content/uploads/company-director-mortgages-524x349.jpg"
         ogImageWidth={524}

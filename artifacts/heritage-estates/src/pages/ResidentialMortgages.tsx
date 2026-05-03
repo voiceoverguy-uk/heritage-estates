@@ -8,8 +8,8 @@ export default function ResidentialMortgages() {
   return (
     <>
       <SeoHead
-        title="Personal services on Residential Mortgages for Leicester and Oadby"
-        description="Heritage Estates offer personal residential mortgage services in Leicester and Oadby. Whole of market advisers helping you find the right mortgage."
+        title="Residential Mortgages Leicester | Heritage Estates | Whole of Market"
+        description="Heritage Estates offer residential mortgage advice in Leicester and across Leicestershire. Whole-of-market advisers helping you find the right mortgage deal."
         path="/residential-mortgages/"
         ogImage="https://heritageestates.co.uk/wp-content/uploads/residential-mortgages-524x349.jpg"
         ogImageWidth={524}

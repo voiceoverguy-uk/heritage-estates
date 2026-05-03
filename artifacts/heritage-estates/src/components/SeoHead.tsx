@@ -96,6 +96,16 @@ const localBusinessSchema = {
   ],
   sameAs: [SITE_URL],
   priceRange: "££",
+  additionalType: "https://schema.org/FinancialService",
+  serviceType: [
+    "Residential Mortgages",
+    "Buy-To-Let Mortgages",
+    "Remortgages",
+    "First-Time Buyer Mortgages",
+    "Self-Employed Mortgages",
+    "Company Director Mortgages",
+    "Insurance & Protection",
+  ],
   areaServed: [
     { "@type": "City", name: "Leicester" },
     { "@type": "City", name: "Oadby" },
@@ -257,6 +267,7 @@ function slugToLabel(slug: string): string {
     "mortgages-for-company-directors": "Mortgages for Company Directors",
     "privacy-cookies": "Privacy & Cookies",
     "mortgage-calculator": "Mortgage Calculator",
+    "mortgage-broker-leicester": "Mortgage Broker Leicester",
   };
   return map[slug] ?? slug;
 }

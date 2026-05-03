@@ -15,6 +15,7 @@ import InsuranceProtection from "@/pages/InsuranceProtection";
 import CompanyDirectors from "@/pages/CompanyDirectors";
 import PrivacyCookies from "@/pages/PrivacyCookies";
 import MortgageCalculator from "@/pages/MortgageCalculator";
+import MortgageBrokerLeicester from "@/pages/MortgageBrokerLeicester";
 import NotFound from "@/pages/NotFound";
 
 function Router() {
@@ -48,6 +49,8 @@ function Router() {
         <Route path="/privacy-cookies" component={PrivacyCookies} />
         <Route path="/mortgage-calculator/" component={MortgageCalculator} />
         <Route path="/mortgage-calculator" component={MortgageCalculator} />
+        <Route path="/mortgage-broker-leicester/" component={MortgageBrokerLeicester} />
+        <Route path="/mortgage-broker-leicester" component={MortgageBrokerLeicester} />
         <Route component={NotFound} />
       </Switch>
     </Layout>

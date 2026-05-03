@@ -1,0 +1,70 @@
+REPLIT PROMPT — Add 3 Features to Heritage Estates
+
+Please add the following three features to the Heritage Estates website. Do not break any existing functionality.
+
+FEATURE 1: New page at /mortgage-broker-leicester/
+Create a new page at the exact URL /mortgage-broker-leicester/ with the following SEO requirements:
+
+Meta title: Mortgage Broker Leicester | Heritage Estates
+Meta description: Looking for a trusted mortgage broker in Leicester? Heritage Estates offers whole-of-market mortgage advice, FCA regulated, with local knowledge across Leicester and Leicestershire.
+H1: Mortgage Broker Leicester
+The phrase "mortgage broker in Leicester" must appear in the first paragraph
+
+Page content should include these sections (use placeholder copy for now, clearly marked so the client can edit):
+Section 1 — Intro
+Copy: Heritage Estates is Leicester's trusted estate agent and in-house mortgage broker. Whether you're a first-time buyer, moving home, or investing in property, our FCA-regulated mortgage advisers are here to help you find the right mortgage from across the whole market — not just one lender.
+Section 2 — Why Choose Our Mortgage Broker in Leicester
+Copy: Unlike comparison websites or call centres, our mortgage broker in Leicester sits within our estate agency. That means we understand the local market, local property values, and can work alongside your sale or purchase from day one. [CLIENT TO ADD: specific broker name, qualifications, years of experience]
+Section 3 — Whole of Market Access
+Copy: We search deals from across the whole mortgage market, including lenders not available directly to the public. From high street banks to specialist lenders, we find the deal that fits your circumstances — not just the easiest one to arrange. [CLIENT TO ADD: any lender panel details or accreditations]
+Section 4 — Leicester Property Market
+Copy: Leicester's property market has remained resilient, with strong demand across areas including Oadby, Stoneygate, Birstall, Wigston, and the city centre. Average property prices in Leicester have grown steadily, making mortgage planning more important than ever. Our local knowledge means we can advise you with genuine context, not just national statistics. [CLIENT TO ADD: latest local market commentary or stats from Land Registry]
+Section 5 — FCA Regulated Advice
+Copy: All mortgage advice provided through Heritage Estates is fully FCA regulated. Our advisers hold CeMAP qualifications and are authorised to provide mortgage recommendations. FCA registration number: [CLIENT TO ADD]. Your home may be repossessed if you do not keep up repayments on your mortgage.
+Section 6 — Get in Touch
+Copy: Ready to find out how much you could borrow? Contact our Leicester mortgage broker team today. [CLIENT TO ADD: phone number, email, or embed contact form here] Alternatively, use our free mortgage calculator to get an instant estimate. — link the words "mortgage calculator" to /mortgage-calculator/
+Design: match the existing site style exactly. Add this page to the site navigation under a "Mortgages" or "Services" dropdown if one exists, otherwise add it to the footer navigation.
+
+FEATURE 2: "How Much Can I Borrow?" Estimator on the Mortgage Calculator page
+Add a new estimator section to the existing /mortgage-calculator/ page, positioned above or below the existing calculator (whichever looks cleaner). Do not remove or alter the existing calculator.
+The estimator should be titled "How Much Can I Borrow?" and work as follows:
+Inputs:
+
+Toggle: Single / Joint application
+Applicant 1 gross annual salary (£, number input)
+Applicant 2 gross annual salary (£, number input) — shown only when Joint is selected
+Monthly debt commitments (£) — car finance, loans, credit cards — with a small tooltip explaining this
+Number of dependants (dropdown: 0, 1, 2, 3, 4+)
+
+Calculation logic:
+
+Base multiplier: 4.5x combined gross annual income
+Reduce estimated figure by (monthly debts x 12) to reflect affordability impact
+Dependant reduction: subtract £5,000 per dependant from the maximum as a rough adjustment
+Show a range: lower figure at 4x income, upper figure at 4.5x income (both after debt/dependant adjustments)
+If user also enters a deposit amount (optional field), show an estimated maximum purchase price (borrowing range + deposit)
+
+Output display:
+
+"Estimated borrowing range: £X — £Y"
+If deposit entered: "Estimated maximum purchase price: £X — £Y"
+A note in smaller text: "This is an estimate based on standard income multiples. Actual lending depends on your credit history, lender criteria, and full affordability assessment."
+A CTA button: "Get an accurate figure — speak to our broker" linking to the contact page or /mortgage-broker-leicester/
+
+
+FEATURE 3: Leicester Property Market Data section
+Add a new section to the /mortgage-broker-leicester/ page (and optionally a standalone widget on the homepage) that pulls live sold price data from the HM Land Registry Price Paid Data API.
+The Land Registry API endpoint is free and requires no API key:
+https://landregistry.data.gov.uk/data/ppi/transaction-record.json?propertyAddress.town=LEICESTER&_pageSize=50&_sort=-transactionDate
+Use this to display:
+
+A table or card layout showing the 10 most recent property sales in Leicester
+Columns: Address, Property Type, Sale Price, Sale Date
+A calculated average sale price from the returned results, displayed prominently above the table as: "Average recent sale price in Leicester: £XXX,XXX"
+A "Data source" note: "Source: HM Land Registry Price Paid Data. Updated regularly."
+A refresh/reload button so users can fetch the latest data
+
+If the API call fails or returns no data, show a graceful fallback message: "Market data temporarily unavailable. Please check back shortly."
+Style this section to match the rest of the site. Label it clearly as "Leicester Property Market — Recent Sales"
+
+That's all three features. Please implement them without touching any existing pages, calculators, or navigation that already works.

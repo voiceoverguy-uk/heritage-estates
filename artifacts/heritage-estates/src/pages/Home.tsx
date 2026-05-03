@@ -49,8 +49,8 @@ export default function Home() {
   return (
     <>
       <SeoHead
-        title="Mortgage Broker in Leicester and Oadby"
-        description="Heritage Estates are mortgage brokers based in Oadby, Leicester. We offer residential mortgages, buy-to-let, remortgages, first time buyer advice and insurance services."
+        title="Mortgage Broker Leicester | Heritage Estates | Independent Advice"
+        description="Heritage Estates are independent whole-of-market mortgage brokers based in Leicester. Residential mortgages, buy-to-let, remortgages, first-time buyers and insurance across Leicestershire."
         path="/"
         schemaType="WebPage"
       />

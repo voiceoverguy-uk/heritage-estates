@@ -23,8 +23,8 @@ export default function Remortgaging() {
   return (
     <>
       <SeoHead
-        title="Remortgaging, Raising Additional Capital and Re-financing in Leicester"
-        description="Heritage Estates help with remortgaging, raising additional capital and re-financing in Leicester and Oadby. Expert whole-of-market mortgage advice."
+        title="Remortgage Leicester | Heritage Estates | Whole of Market Advice"
+        description="Heritage Estates help with remortgaging, raising additional capital and re-financing in Leicester and across Leicestershire. Expert whole-of-market mortgage advice."
         path="/remortgaging/"
         ogImage="https://heritageestates.co.uk/wp-content/uploads/remortgage-524x349.jpg"
         ogImageWidth={524}

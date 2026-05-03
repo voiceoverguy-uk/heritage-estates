@@ -202,6 +202,7 @@ export default function Layout({ children }: LayoutProps) {
               <div style={{ marginBottom: 4 }}><Link href="/mortgage-calculator/" style={{ color: "#aac8e8", fontSize: 13, textDecoration: "none" }}>Mortgage Calculator</Link></div>
               <div style={{ marginBottom: 4 }}><Link href="/privacy-cookies/" style={{ color: "#aac8e8", fontSize: 13, textDecoration: "none" }}>Privacy & Cookies</Link></div>
               <div style={{ marginBottom: 4 }}><Link href="/contact/" style={{ color: "#aac8e8", fontSize: 13, textDecoration: "none" }}>Contact Us</Link></div>
+              <div style={{ marginBottom: 4 }}><Link href="/mortgage-broker-leicester/" style={{ color: "#aac8e8", fontSize: 13, textDecoration: "none" }}>Mortgage Broker Leicester</Link></div>
             </div>
           </div>
           <div style={{ borderTop: "1px solid #2a4a6a", paddingTop: 16, fontSize: 12, color: "#888", lineHeight: 1.6 }}>

@@ -7,8 +7,8 @@ export default function SelfEmployed() {
   return (
     <>
       <SeoHead
-        title="Get your Self Employed Mortgage Application approved with Heritage Estates"
-        description="Heritage Estates help self-employed people get mortgage applications approved. Whole of market access to specialist and regular lenders in Leicester."
+        title="Self-Employed Mortgages Leicester | Heritage Estates | Specialist Advice"
+        description="Heritage Estates help self-employed people in Leicester and Leicestershire get mortgage applications approved. Whole-of-market access to specialist and mainstream lenders."
         path="/mortgages-for-self-employed/"
         ogImage="https://heritageestates.co.uk/wp-content/uploads/mortgages-for-self-employed-524x349.jpg"
         ogImageWidth={524}

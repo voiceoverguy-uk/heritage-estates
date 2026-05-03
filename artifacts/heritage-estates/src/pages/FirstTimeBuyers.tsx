@@ -8,8 +8,8 @@ export default function FirstTimeBuyers() {
   return (
     <>
       <SeoHead
-        title="First Time Buyers Mortgages on fixed rates by Heritage Estates"
-        description="Heritage Estates help first time buyers navigate the mortgage process in Leicester and Oadby. Get expert advice tailored to your circumstances."
+        title="First Time Buyer Mortgages Leicester | Heritage Estates | Expert Advice"
+        description="Heritage Estates help first-time buyers in Leicester and across Leicestershire navigate the mortgage process. Expert, whole-of-market advice tailored to your circumstances."
         path="/mortgages-for-first-time-buyers/"
         ogImage="https://heritageestates.co.uk/wp-content/uploads/mortgages-for-first-time-buyers-524x349.jpg"
         ogImageWidth={524}

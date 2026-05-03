@@ -161,6 +161,71 @@ function downloadMortgagePDF(data: MortgagePDFData) {
     y += 10;
   }
 
+  // ── Comparison table: Repayment vs Interest Only ──
+  {
+    const repayM2  = calcRepayment(data.mortgageAmount, data.rateNum, data.termNum);
+    const ioM2     = calcInterestOnly(data.mortgageAmount, data.rateNum);
+    const repayTI2 = Math.max(0, repayM2 * data.termNum * 12 - data.mortgageAmount);
+    const ioTI2    = ioM2 * data.termNum * 12;
+    const repayTC2 = repayM2 * data.termNum * 12;
+    const ioTC2    = ioTI2 + data.mortgageAmount;
+
+    y += 6;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.setTextColor(0, 106, 193);
+    doc.text("At a glance: Repayment vs Interest Only", L, y);
+    y += 4;
+    doc.setDrawColor(0, 106, 193);
+    doc.setLineWidth(0.5);
+    doc.line(L, y, R, y);
+    y += 5;
+
+    const colM = 130;
+    doc.setFontSize(9.5);
+    doc.setTextColor(85, 85, 85);
+    doc.setFont("helvetica", "bold");
+    doc.text("Repayment", colM, y, { align: "right" });
+    doc.text("Interest Only", R, y, { align: "right" });
+    y += 4;
+    doc.setDrawColor(200, 215, 240);
+    doc.setLineWidth(0.2);
+    doc.line(L, y, R, y);
+    y += 5;
+
+    const compRows: [string, string, string][] = [
+      ["Monthly Repayment",          `£${fmt(repayM2)}`,  `£${fmt(ioM2)}`],
+      ["Total Interest",             `£${fmt(repayTI2)}`, `£${fmt(ioTI2)}`],
+      ["Total Cost",                 `£${fmt(repayTC2)}`, `£${fmt(ioTC2)}`],
+      ["Capital owed at term end",   "£0",                `£${fmt(data.mortgageAmount)}`],
+    ];
+    for (const [label, rVal, ioVal] of compRows) {
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(85, 85, 85);
+      doc.text(label, L, y);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(51, 51, 51);
+      doc.text(rVal, colM, y, { align: "right" });
+      doc.text(ioVal, R, y, { align: "right" });
+      y += 5;
+      doc.setDrawColor(220, 230, 245);
+      doc.line(L, y, R, y);
+      y += 4;
+    }
+
+    const mDiff2   = repayM2 - ioM2;
+    const intSaved2 = ioTI2 - repayTI2;
+    y += 2;
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(9);
+    doc.setTextColor(100, 100, 100);
+    doc.text(
+      `Repayment costs £${fmt(mDiff2)}/month more but saves £${fmt(intSaved2)} in total interest over ${data.termNum} years.`,
+      L, y
+    );
+    y += 8;
+  }
+
   y = Math.max(y + 10, 248);
   doc.setDrawColor(200, 200, 200);
   doc.setLineWidth(0.3);
@@ -625,10 +690,16 @@ function MortgageCalc(props: MortgageCalcProps) {
           </div>
 
           <div className="he-form-field">
-            <label>Stress Test Rate (%) <span style={{ fontWeight: 400, color: "#888", fontSize: 12 }}>— optional</span></label>
+            <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 6 }}>
+              <label style={{ margin: 0 }}>Stress Test Rate (%)</label>
+              <span
+                title="Lenders check you can still afford repayments if rates rise. This is typically set 3% above your initial rate."
+                style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 16, height: 16, background: "#2EA3F2", color: "#fff", borderRadius: "50%", fontSize: 10, fontWeight: 700, cursor: "help", flexShrink: 0, userSelect: "none" as const }}
+              >?</span>
+            </div>
             <input type="number" value={stressRate} onChange={(e) => setStressRate(e.target.value)}
-              placeholder="e.g. 7.0" step="0.01" min="0" max="25" />
-            <p style={{ fontSize: 12, color: "#888", marginTop: 4 }}>Shows your payment at a higher rate.</p>
+              placeholder="e.g. 7.5" step="0.01" min="0" max="25" />
+            <p style={{ fontSize: 12, color: "#888", marginTop: 4 }}>Edit to model your own scenario.</p>
           </div>
         </div>
 
@@ -681,15 +752,22 @@ function MortgageCalc(props: MortgageCalcProps) {
 
               {/* ── 1. Monthly Repayment — hero number ── */}
               <div style={{
-                display: "flex", justifyContent: "space-between", alignItems: "center",
                 padding: "14px 0 16px",
                 borderBottom: "2px solid #006AC1",
                 marginBottom: 4,
               }}>
-                <span style={{ fontSize: 15, fontWeight: 700, color: "#333" }}>Monthly Repayment</span>
-                <span style={{ fontSize: 28, fontWeight: 800, color: "#006AC1", letterSpacing: -0.5 }}>
-                  £{fmt(monthly)}
-                </span>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: 15, fontWeight: 700, color: "#333" }}>Monthly Repayment</span>
+                  <span style={{ fontSize: 28, fontWeight: 800, color: "#006AC1", letterSpacing: -0.5 }}>
+                    £{fmt(monthly)}
+                  </span>
+                </div>
+                {stressedMonthly > 0 && (
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8, paddingTop: 8, borderTop: "1px dashed #dde8f5" }}>
+                    <span style={{ fontSize: 13, color: "#888" }}>At stress rate ({stressRateNum}%)</span>
+                    <span style={{ fontSize: 19, fontWeight: 700, color: "#dc2626" }}>£{fmt(stressedMonthly)}</span>
+                  </div>
+                )}
               </div>
 
               {/* ── 2. Property Price ── */}
@@ -781,19 +859,10 @@ function MortgageCalc(props: MortgageCalcProps) {
                 <span style={{ color: "#555", fontWeight: 600 }}>{rateNum}%</span>
               </div>
 
-              {/* Stress test */}
+              {/* Stress test note */}
               {stressedMonthly > 0 && (
-                <div style={{ marginTop: 20, padding: 16, background: "#fff5f5", border: "2px solid #dc2626" }}>
-                  <p style={{ fontSize: 12, fontWeight: 700, color: "#dc2626", margin: "0 0 8px" }}>
-                    ⚠ Stress Test at {stressRateNum}%
-                  </p>
-                  <div className="he-result-item" style={{ borderBottom: "none", padding: 0 }}>
-                    <span className="he-result-label" style={{ color: "#dc2626" }}>Stressed Monthly</span>
-                    <span className="he-result-value he-result-stressed">£{fmt(stressedMonthly)}</span>
-                  </div>
-                  <p style={{ fontSize: 12, color: "#dc2626", marginTop: 8, marginBottom: 0 }}>
-                    Monthly increase: £{fmt(stressedMonthly - monthly)}
-                  </p>
+                <div style={{ marginTop: 16, padding: "10px 14px", background: "#fff5f5", border: "1px solid #fca5a5", fontSize: 12, color: "#b91c1c", lineHeight: 1.55 }}>
+                  At {stressRateNum}% your monthly repayment would rise by <strong>£{fmt(stressedMonthly - monthly)}</strong>. Lenders confirm you can afford this before approving your mortgage.
                 </div>
               )}
 
@@ -998,6 +1067,90 @@ function StampDutyCalculator({ propertyRef, price, setPrice, buyerType, setBuyer
           </div>
         </div>
       </div>
+      {/* Repayment vs Interest Only — at a glance */}
+      {hasResults && (
+        <ComparisonPanel
+          mortgageAmount={mortgageAmount}
+          rateNum={rateNum}
+          termNum={termNum}
+          mortgageType={mortgageType}
+        />
+      )}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   COMPARISON PANEL
+───────────────────────────────────────────────────────────────── */
+
+interface ComparisonPanelProps {
+  mortgageAmount: number;
+  rateNum: number;
+  termNum: number;
+  mortgageType: MortgageType;
+}
+
+function ComparisonPanel({ mortgageAmount, rateNum, termNum, mortgageType }: ComparisonPanelProps) {
+  const repayM   = calcRepayment(mortgageAmount, rateNum, termNum);
+  const ioM      = calcInterestOnly(mortgageAmount, rateNum);
+  const repayTI  = Math.max(0, repayM * termNum * 12 - mortgageAmount);
+  const ioTI     = ioM * termNum * 12;
+  const repayTC  = repayM * termNum * 12;
+  const ioTC     = ioTI + mortgageAmount;
+  const mDiff    = repayM - ioM;
+  const intSaved = ioTI - repayTI;
+  const isRepay  = mortgageType === "repayment";
+
+  const colR: React.CSSProperties  = { textAlign: "right", padding: "9px 14px", background: isRepay  ? "#e8f1fb" : "transparent", borderLeft: "1px solid #dde8f5", fontSize: 13, fontWeight: 600, color: "#333" };
+  const colIO: React.CSSProperties = { textAlign: "right", padding: "9px 14px", background: !isRepay ? "#e8f1fb" : "transparent", borderLeft: "1px solid #dde8f5", fontSize: 13, fontWeight: 600, color: "#333" };
+  const lbl: React.CSSProperties   = { padding: "9px 14px", fontSize: 13, color: "#555" };
+
+  return (
+    <div style={{ marginTop: 28 }}>
+      <div style={{ background: "#006AC1", padding: "10px 20px" }}>
+        <p style={{ color: "#fff", fontWeight: 700, fontSize: 14, margin: 0 }}>At a glance: Repayment vs Interest Only</p>
+      </div>
+      <div style={{ overflowX: "auto" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", border: "1px solid #dde8f5", borderTop: "none" }}>
+          <thead>
+            <tr style={{ borderBottom: "2px solid #dde8f5" }}>
+              <th style={{ textAlign: "left", padding: "10px 14px", fontSize: 12, color: "#555", fontWeight: 700, width: "40%" }}></th>
+              <th style={{ textAlign: "right", padding: "10px 14px", fontSize: 13, color: "#006AC1", fontWeight: 700, background: isRepay ? "#e8f1fb" : "transparent", borderLeft: "1px solid #dde8f5" }}>
+                Repayment{isRepay ? " ✓" : ""}
+              </th>
+              <th style={{ textAlign: "right", padding: "10px 14px", fontSize: 13, color: "#006AC1", fontWeight: 700, background: !isRepay ? "#e8f1fb" : "transparent", borderLeft: "1px solid #dde8f5" }}>
+                Interest Only{!isRepay ? " ✓" : ""}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style={{ borderBottom: "1px solid #f0f4fa" }}>
+              <td style={lbl}>Monthly Repayment</td>
+              <td style={{ ...colR,  color: "#006AC1", fontSize: 15 }}>£{fmt(repayM)}</td>
+              <td style={{ ...colIO, color: "#006AC1", fontSize: 15 }}>£{fmt(ioM)}</td>
+            </tr>
+            <tr style={{ borderBottom: "1px solid #f0f4fa" }}>
+              <td style={lbl}>Total Interest Paid</td>
+              <td style={colR}>£{fmt(repayTI)}</td>
+              <td style={colIO}>£{fmt(ioTI)}</td>
+            </tr>
+            <tr style={{ borderBottom: "1px solid #f0f4fa" }}>
+              <td style={lbl}>Total Cost (interest + capital)</td>
+              <td style={colR}>£{fmt(repayTC)}</td>
+              <td style={colIO}>£{fmt(ioTC)}</td>
+            </tr>
+            <tr>
+              <td style={lbl}>Capital owed at term end</td>
+              <td style={{ ...colR,  color: "#16a34a", fontWeight: 700 }}>£0</td>
+              <td style={{ ...colIO, color: "#dc2626", fontWeight: 700 }}>£{fmt(mortgageAmount)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style={{ padding: "10px 20px", background: "#f7faff", border: "1px solid #dde8f5", borderTop: "none", fontSize: 13, color: "#555", lineHeight: 1.6 }}>
+        Repayment costs <strong>£{fmt(mDiff)}/month more</strong> but saves <strong>£{fmt(intSaved)}</strong> in total interest over {termNum} years.
+      </div>
     </div>
   );
 }
@@ -1017,7 +1170,7 @@ export default function MortgageCalculatorPage() {
   const [rate,           setRate]           = useState("4.5");
   const [term,           setTerm]           = useState("25");
   const [mortgageType,   setMortgageType]   = useState<MortgageType>("repayment");
-  const [stressRate,     setStressRate]     = useState("");
+  const [stressRate,     setStressRate]     = useState("7.5");
   const [buyerType,      setBuyerType]      = useState<BuyerType>("main-residence");
 
   const shared: SharedState = {

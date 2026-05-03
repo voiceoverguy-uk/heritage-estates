@@ -7,8 +7,8 @@ export default function InsuranceProtection() {
   return (
     <>
       <SeoHead
-        title="★ Affordable Mortgage Insurance & Protection Services by Heritage Estates ★"
-        description="Heritage Estates provide affordable mortgage insurance and protection services including life insurance, critical illness cover and income protection in Leicester."
+        title="Insurance &amp; Protection Services Leicester | Heritage Estates"
+        description="Heritage Estates provide mortgage insurance and protection services in Leicester, including life insurance, critical illness cover and income protection across Leicestershire."
         path="/insurance-protection/"
         ogImage="https://heritageestates.co.uk/wp-content/uploads/insurance-and-protection-524x349.jpg"
         ogImageWidth={524}

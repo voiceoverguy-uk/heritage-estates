@@ -22,8 +22,8 @@ export default function BuyToLet() {
   return (
     <>
       <SeoHead
-        title="Buy-To-Let Mortgages offered by the advisors from Heritage Estates"
-        description="Heritage Estates offer buy-to-let mortgage advice in Leicester and Oadby. Whole of market access to help you find the right investment property mortgage."
+        title="Buy-To-Let Mortgages Leicester | Heritage Estates | Investment Advice"
+        description="Heritage Estates offer buy-to-let mortgage advice in Leicester and across Leicestershire. Whole-of-market access to help you find the right investment property mortgage."
         path="/buy-to-let-mortgages/"
         ogImage="https://heritageestates.co.uk/wp-content/uploads/buy-to-let-mortgages-524x349.jpg"
         ogImageWidth={524}
